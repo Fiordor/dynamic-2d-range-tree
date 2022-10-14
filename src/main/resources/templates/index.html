@@ -90,7 +90,14 @@
             xhr.onreadystatechange = () => { // Call a function when the state changes.
                 if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
                     // Request finished. Do processing here.
-                    document.getElementById('result').innerHTML = xhr.responseText;
+                    let res = xhr.responseText;
+                    let child = '';
+                    if (res.startsWith('data:image')) {
+                        child = '<img src="' + res + '">';
+                    } else {
+                        child = res;
+                    }
+                    document.getElementById('result').innerHTML = child;
                 }
             }
             let form = document.getElementById('formPoints');
