@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        *,
+        html {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: grid;
+            grid-template-columns: 300px auto;
+            column-gap: 16px;
+            position: fixed;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .left {
+            background-color: rgb(245, 245, 245);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 16px;
+            margin-left: 16px;
+            margin-right: 16px;
+            margin-bottom: 16px;
+        }
+
+        .row-new {
+            background-color: rgba(255, 0, 0, 0.2);
+        }
+
+        .row input {
+            width: 100%;
+        }
+    </style>
+
+    <title>Dynamic 2D Range Tree</title>
+</head>
+
+<body>
+    <div class="left">
+        <h1>%s</h1>
+        <div onclick="add()">Add</div>
+        <div onclick="update()">Update</div>
+        <form id="formPoints" action="test" method="post">
+            <div class="row">
+                <input type="number" name="px1" value="1">
+                <input type="number" name="py1" value="1">
+            </div>
+            <div class="row">
+                <input type="number" name="px2" value="1">
+                <input type="number" name="py2" value="1">
+            </div>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <div class="right"></div>
+
+    <script>
+        var contNewPoints = 1;
+        function add() {
+            let form = document.getElementById('formPoints');
+            let child = `
+                <div class="row row-new">
+                    <input type="number" name="newpx${contNewPoints}" value="1">
+                    <input type="number" name="newpy${contNewPoints}" value="1">
+                </div>`;
+            form.innerHTML = child + form.innerHTML;
+            contNewPoints++;
+        }
+
+        function update() {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", '/test', true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            xhr.onreadystatechange = () => { // Call a function when the state changes.
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    // Request finished. Do processing here.
+                    console.log(xhr.responseText);
+                }
+            }
+            xhr.send();
+        }
+    </script>
+</body>
+
+</html>
