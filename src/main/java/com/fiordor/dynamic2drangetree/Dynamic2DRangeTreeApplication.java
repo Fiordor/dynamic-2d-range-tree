@@ -2,14 +2,14 @@ package com.fiordor.dynamic2drangetree;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.util.ResourceUtils;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -30,12 +30,12 @@ public class Dynamic2DRangeTreeApplication {
 
 	@PostMapping("/test")
 	public String test (@RequestParam Map<String, String> params) {
-		return "test" + params.toString();
+		return params.toString();
 	}
 
 	private String readFile() {
 		try {
-			File fileObject = ResourceUtils.getFile("classpath:templates/index.html");
+			InputStream fileObject = new ClassPathResource("templates/index.html").getInputStream();
 			Scanner fileReader = new Scanner(fileObject);
 			StringBuilder rawData = new StringBuilder();
 			while (fileReader.hasNextLine()) {
@@ -44,8 +44,8 @@ public class Dynamic2DRangeTreeApplication {
 			}
 			fileReader.close();
 			return rawData.toString();
-		} catch (FileNotFoundException e) {
-			return "File not found Exception";
+		} catch (IOException e) {
+			return "File not found Exception " + e.getMessage();
 		}
 	}
 

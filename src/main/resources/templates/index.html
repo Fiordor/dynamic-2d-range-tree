@@ -65,7 +65,9 @@
             <input type="submit" value="Submit">
         </form>
     </div>
-    <div class="right"></div>
+    <div class="right">
+        <div id="result"></div>
+    </div>
 
     <script>
         var contNewPoints = 1;
@@ -88,10 +90,14 @@
             xhr.onreadystatechange = () => { // Call a function when the state changes.
                 if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
                     // Request finished. Do processing here.
-                    console.log(xhr.responseText);
+                    document.getElementById('result').innerHTML = xhr.responseText;
                 }
             }
-            xhr.send();
+            let form = document.getElementById('formPoints');
+            let formData = new FormData(form);
+            let data = [...formData.entries()];
+            let asString = data.map(x => `${encodeURIComponent(x[0])}=${encodeURIComponent(x[1])}`).join('&');
+            xhr.send(asString);
         }
     </script>
 </body>
