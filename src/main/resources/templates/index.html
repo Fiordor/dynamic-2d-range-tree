@@ -3,7 +3,6 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
 
     <style>
         *,
@@ -27,21 +26,26 @@
             background-color: rgb(245, 245, 245);
         }
 
-        .row {
+        .row-add {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 100px 100px auto;
             column-gap: 16px;
-            margin-left: 16px;
-            margin-right: 16px;
-            margin-bottom: 16px;
+            margin: 16px;
         }
 
-        .row-new {
-            background-color: rgba(255, 0, 0, 0.2);
+        .list-points {
+            display: flex;
+            flex-direction: column;
         }
 
-        .row input {
-            width: 100%;
+        .row-point {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .bt-add:hover {
+            cursor: pointer;
+            background-color: aqua;
         }
     </style>
 
@@ -50,41 +54,48 @@
 
 <body>
     <div class="left">
-        <h1>%s</h1>
-        <div onclick="add()">Add</div>
-        <div onclick="update()">Update</div>
-        <form id="formPoints" action="test" method="post">
-            <div class="row">
-                <input type="number" name="px1" value="1">
-                <input type="number" name="py1" value="1">
-            </div>
-            <div class="row">
-                <input type="number" name="px2" value="1">
-                <input type="number" name="py2" value="1">
-            </div>
-            <input type="submit" value="Submit">
+        <h1>Points</h1>
+        <form id="formPoints" class="row-add">
+            <input type="number" name="x" value="0">
+            <input type="number" name="y" value="0">
+            <div class="bt-add" onclick="add()">ADD</div>
         </form>
+        <div id="listPoints" class="list-points">
+            <div class="row-point">
+                <div class="point">1</div>
+                <div class="point">1</div>
+            </div>
+            <div class="row-point">
+                <div class="point">1</div>
+                <div class="point">1</div>
+            </div>
+        </div>
     </div>
     <div class="right">
         <div id="result"></div>
     </div>
 
     <script>
-        var contNewPoints = 1;
         function add() {
-            let form = document.getElementById('formPoints');
-            let child = `
-                <div class="row row-new">
-                    <input type="number" name="newpx${contNewPoints}" value="1">
-                    <input type="number" name="newpy${contNewPoints}" value="1">
-                </div>`;
-            form.innerHTML = child + form.innerHTML;
-            contNewPoints++;
-        }
 
-        function update() {
+            let form = document.getElementById('formPoints');
+            let x = parseInt(form.x.value);
+            let y = parseInt(form.y.value)
+
+            let list = document.getElementById('listPoints');
+            let child = `
+                <div class="row-point">
+                    <div class="point">${x}</div>
+                    <div class="point">${y}</div>
+                </div>`;
+            list.innerHTML = child + list.innerHTML;
+
+            let encodeValues = 'x=' + encodeURIComponent(x) + '&' + 'y=' + encodeURIComponent(y);
+
+            form.reset();
+
             const xhr = new XMLHttpRequest();
-            xhr.open("POST", '/test', true);
+            xhr.open("POST", '/add', true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
             xhr.onreadystatechange = () => { // Call a function when the state changes.
@@ -100,11 +111,8 @@
                     document.getElementById('result').innerHTML = child;
                 }
             }
-            let form = document.getElementById('formPoints');
-            let formData = new FormData(form);
-            let data = [...formData.entries()];
-            let asString = data.map(x => `${encodeURIComponent(x[0])}=${encodeURIComponent(x[1])}`).join('&');
-            xhr.send(asString);
+
+            xhr.send(encodeValues);
         }
     </script>
 </body>
