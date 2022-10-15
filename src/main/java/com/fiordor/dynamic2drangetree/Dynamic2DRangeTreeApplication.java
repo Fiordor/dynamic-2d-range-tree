@@ -26,7 +26,7 @@ public class Dynamic2DRangeTreeApplication {
 	}
 
 	@PostMapping("/add")
-	public String test (@RequestParam Map<String, String> params) {
+	public String add(@RequestParam Map<String, String> params) {
 		return Image.create(params.toString());
 	}
 }
