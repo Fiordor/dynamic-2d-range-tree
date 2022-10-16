@@ -4,50 +4,8 @@
 <head>
     <meta charset="UTF-8">
 
-    <style>
-        *,
-        html {
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            display: grid;
-            grid-template-columns: 300px auto;
-            column-gap: 16px;
-            position: fixed;
-            left: 0;
-            right: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        .left {
-            background-color: rgb(245, 245, 245);
-        }
-
-        .row-add {
-            display: grid;
-            grid-template-columns: 100px 100px auto;
-            column-gap: 16px;
-            margin: 16px;
-        }
-
-        .list-points {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .row-point {
-            display: flex;
-            flex-direction: row;
-        }
-
-        .bt-add:hover {
-            cursor: pointer;
-            background-color: aqua;
-        }
-    </style>
+    <link rel="stylesheet" href="viewer.min.css">
+    <link rel="stylesheet" href="style.css">
 
     <title>Dynamic 2D Range Tree</title>
 </head>
@@ -72,49 +30,13 @@
         </div>
     </div>
     <div class="right">
-        <div id="result"></div>
+        <div class="container-image">
+            <img id="image" src="" style="display: none;">
+        </div>
     </div>
 
-    <script>
-        function add() {
-
-            let form = document.getElementById('formPoints');
-            let x = parseInt(form.x.value);
-            let y = parseInt(form.y.value)
-
-            let list = document.getElementById('listPoints');
-            let child = `
-                <div class="row-point">
-                    <div class="point">${x}</div>
-                    <div class="point">${y}</div>
-                </div>`;
-            list.innerHTML = child + list.innerHTML;
-
-            let encodeValues = 'x=' + encodeURIComponent(x) + '&' + 'y=' + encodeURIComponent(y);
-
-            form.reset();
-
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", '/add', true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-            xhr.onreadystatechange = () => { // Call a function when the state changes.
-                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                    // Request finished. Do processing here.
-                    let res = xhr.responseText;
-                    let child = '';
-                    if (res.startsWith('data:image')) {
-                        child = '<img src="' + res + '">';
-                    } else {
-                        child = res;
-                    }
-                    document.getElementById('result').innerHTML = child;
-                }
-            }
-
-            xhr.send(encodeValues);
-        }
-    </script>
+    <script src="viewer.min.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>

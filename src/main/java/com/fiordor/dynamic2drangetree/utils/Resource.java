@@ -10,12 +10,31 @@ public class Resource {
     
 
 	/**
-	 * Read index.html file from resources
+	 * Read index.html file from resources adding styles and scrpits
 	 * 
 	 * @return index file as plain text
 	 */
     public static String readIndexAsString() {
-        return readAsString("templates/index.html");
+
+		String index = readAsString("templates/index.html");
+
+		String cssViewer = readAsString("static/viewer.min.css");
+		String css = readAsString("static/styles.css");
+		String jsView = readAsString("static/viewer.min.js");
+		String js = readAsString("static/script.js");
+		
+
+		cssViewer = "<!-- viewer.min.css -->\n<style>" + cssViewer + "</style>";
+		css = "<!-- style.css -->\n<style>" + css + "</style>";
+		jsView = "<!-- viewer.min.js -->\n<script>" + jsView + "</script>";
+		js = "<!-- script.js -->\n<script>" + js + "</script>";
+
+		index = index.replace("<link rel=\"stylesheet\" href=\"viewer.min.css\">", cssViewer);
+		index = index.replace("<link rel=\"stylesheet\" href=\"style.css\">", css);
+		index = index.replace("<script src=\"viewer.min.js\"></script>", jsView);
+		index = index.replace("<script src=\"script.js\"></script>", js);
+
+        return index;
     }
 
 
