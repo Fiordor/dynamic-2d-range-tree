@@ -13,12 +13,20 @@
 <body>
     <div class="left">
         <h1 class="title">Points</h1>
-        <form id="formPoints" class="container-form">
+        <select id="treeType" class="tree-type" onchange="afterSelection()">
+            <option value="form2DRangeTree" >Dynamic 2D Range Tree</option>
+            <option value="formRedBlackTree" selected>Dynamic Red Black Tree</option>
+          </select>
+        <form id="formRedBlackTree" class="container-red-black-tree">
+            <input type="number" name="k" value="0">
+            <button class="bt-add" type="button" onclick="addRedBlackTree()">ADD</button>
+        </form>
+        <form id="form2DRangeTree" class="container-2d-range-tree" style="display: none;">
             <div class="row-form">
                 <input type="number" name="x" value="0">
                 <input type="number" name="y" value="0">
             </div>
-            <button class="bt-add" type="button" onclick="add()">ADD</button>
+            <button class="bt-add" type="button" onclick="add2DRangeTree()">ADD</button>
         </form>
         <div id="listPoints" class="list-points"></div>
     </div>

@@ -1,9 +1,9 @@
 
 var viewer = null;
 
-function add() {
+function add2DRangeTree() {
 
-    let form = document.getElementById('formPoints');
+    let form = document.getElementById('form2DRangeTree');
     let x = parseInt(form.x.value);
     let y = parseInt(form.y.value)
 
@@ -19,13 +19,30 @@ function add() {
 
     form.reset();
 
-    request(encodeValues);
+    request('/add-2d-range-tree', encodeValues);
 }
 
-function request(encodeValues) {
+function addRedBlackTree() {
+
+    let form = document.getElementById('formRedBlackTree');
+    let k = parseInt(form.k.value);
+
+    let list = document.getElementById('listPoints');
+    let child = `<div>${k}</div>`;
+    list.innerHTML = child + list.innerHTML;
+
+    let encodeValues = 'k=' + encodeURIComponent(k);
+
+    form.reset();
+
+    request('/add-red-black-tree', encodeValues);
+
+}
+
+function request(uri, encodeValues) {
 
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", '/add', true);
+    xhr.open("POST", uri, true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     xhr.onreadystatechange = () => { // Call a function when the state changes.
@@ -69,4 +86,11 @@ function request(encodeValues) {
     }
 
     xhr.send(encodeValues);
+}
+
+function afterSelection() {
+    let option = document.getElementById('treeType').value;
+    console.log(option);
+    document.getElementById('formRedBlackTree').style.display = option == 'formRedBlackTree' ? 'block' : 'none';
+    document.getElementById('form2DRangeTree').style.display = option == 'form2DRangeTree' ? 'block' : 'none';
 }

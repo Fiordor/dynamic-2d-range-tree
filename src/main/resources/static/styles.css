@@ -23,8 +23,18 @@ body {
     margin: 16px;
 }
 
-.container-form {
-    margin: 16px;
+.tree-type {
+    margin: 0px 16px 16px 16px;
+    width: calc(100% - 32px);
+}
+
+.container-red-black-tree, .container-2d-range-tree {
+    margin: 0px 16px 16px 16px;
+}
+
+.container-red-black-tree input {
+    width: 100%;
+    margin-bottom: 16px;
 }
 
 .row-form {

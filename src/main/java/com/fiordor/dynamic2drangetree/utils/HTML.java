@@ -1,9 +1,8 @@
 package com.fiordor.dynamic2drangetree.utils;
 
-import com.fiordor.dynamic2drangetree.structure.Point;
-
 public class HTML {
 
+    /*
     public static String parsePoint(Point p) {
 
         String x = p.getX().toString();
@@ -15,5 +14,6 @@ public class HTML {
             .append("<div class=\"point-r\">").append(y).append("</div>\n")
             .append("</div>").toString();
     }
+    */
     
 }
