@@ -12,22 +12,15 @@
 
 <body>
     <div class="left">
-        <h1>Points</h1>
-        <form id="formPoints" class="row-add">
-            <input type="number" name="x" value="0">
-            <input type="number" name="y" value="0">
-            <div class="bt-add" onclick="add()">ADD</div>
+        <h1 class="title">Points</h1>
+        <form id="formPoints" class="container-form">
+            <div class="row-form">
+                <input type="number" name="x" value="0">
+                <input type="number" name="y" value="0">
+            </div>
+            <button class="bt-add" type="button" onclick="add()">ADD</button>
         </form>
-        <div id="listPoints" class="list-points">
-            <div class="row-point">
-                <div class="point">1</div>
-                <div class="point">1</div>
-            </div>
-            <div class="row-point">
-                <div class="point">1</div>
-                <div class="point">1</div>
-            </div>
-        </div>
+        <div id="listPoints" class="list-points"></div>
     </div>
     <div class="right">
         <div class="container-image">

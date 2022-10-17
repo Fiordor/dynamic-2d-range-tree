@@ -2,11 +2,12 @@
 *, html {
     margin: 0;
     padding: 0;
+    font-family: monospace;
 }
 
 body {
     display: grid;
-    grid-template-columns: 300px auto;
+    grid-template-columns: 250px auto;
     position: fixed;
     left: 0;
     right: 0;
@@ -18,26 +19,49 @@ body {
     background-color: rgb(245, 245, 245);
 }
 
-.row-add {
-    display: grid;
-    grid-template-columns: 100px 100px auto;
-    column-gap: 16px;
+.title {
     margin: 16px;
+}
+
+.container-form {
+    margin: 16px;
+}
+
+.row-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 16px;
+    margin-bottom: 16px;
+}
+
+.row-form input {
+    width: 100%;
+}
+
+.bt-add {
+    width: 100%;
 }
 
 .list-points {
     display: flex;
     flex-direction: column;
+    margin-left: 16px;
+    margin-right: 16px;
 }
 
 .row-point {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 16px;
+    margin-bottom: 16px;
 }
 
-.bt-add:hover {
-    cursor: pointer;
-    background-color: aqua;
+.point-l {
+    text-align: right;
+}
+
+.point-r {
+    text-align: left;
 }
 
 .container-image {
