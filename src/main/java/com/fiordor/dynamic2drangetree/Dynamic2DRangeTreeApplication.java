@@ -13,13 +13,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fiordor.dynamic2drangetree.utils.HTML;
+import com.fiordor.dynamic2drangetree.structure.RedBlackTree;
 import com.fiordor.dynamic2drangetree.utils.Image;
 import com.fiordor.dynamic2drangetree.utils.Resource;
 
 @SpringBootApplication
 @RestController
 public class Dynamic2DRangeTreeApplication {
+
+	public static RedBlackTree<Double> redBlackTree = null;
 
 	public static void main(String[] args) {
 		SpringApplication.run(Dynamic2DRangeTreeApplication.class, args);
@@ -28,25 +30,25 @@ public class Dynamic2DRangeTreeApplication {
 	@GetMapping("/")
 	public String home(HttpServletRequest request) {
 		
-		List<Double> redBlackTree = (List<Double>)request.getSession().getAttribute("red-black-tree");
+		List<Double> redBlackTreeList = (List<Double>)request.getSession().getAttribute("red-black-tree");
 
-		if (redBlackTree == null) {
-			redBlackTree = new ArrayList<Double>();
-			request.getSession().setAttribute("red-black-tree", redBlackTree);
+		if (redBlackTreeList == null) {
+			redBlackTreeList = new ArrayList<Double>();
+			request.getSession().setAttribute("red-black-tree", redBlackTreeList);
 		}
 
 		
 		StringBuilder stBuilder = new StringBuilder().append("<div id=\"listPoints\" class=\"list-points\">");
-		for (int i = 0; i < redBlackTree.size(); i++) {
+		for (int i = 0; i < redBlackTreeList.size(); i++) {
 			
-			Double p = Double.valueOf( redBlackTree.get(i) );
+			Double p = Double.valueOf( redBlackTreeList.get(i) );
 			stBuilder.append(p);
 		}
 		stBuilder.append("</div>");
 		
 
 		String html = Resource.readIndexAsString();
-		//html = html.replace("<div id=\"listPoints\" class=\"list-points\"></div>", stBuilder.toString());
+		html = html.replace("<div id=\"listPoints\" class=\"list-points\"></div>", stBuilder.toString());
 		
 		return html;
 	}
@@ -54,14 +56,7 @@ public class Dynamic2DRangeTreeApplication {
 	@PostMapping("/add-2d-range-tree")
 	public String add2DRangeTree(@RequestParam Map<String, String> params, HttpServletRequest request) {
 
-		/*
-		String x = params.get("x");
-		String y = params.get("y");
-		Point<String> p = new Point<String>(x, y);
-		( ( List<Point<String>> )( request.getSession().getAttribute("points-red-black-tree") ) ).add(p);
-		*/
-
-		return Image.create(params.toString());
+		return "Not developed yet";
 	}
 
 	@PostMapping("/add-red-black-tree")
@@ -69,6 +64,11 @@ public class Dynamic2DRangeTreeApplication {
 
 		Double k = Double.parseDouble(params.get("k"));
 		( (List<Double>) request.getSession().getAttribute("red-black-tree") ).add(k);
+
+		if (redBlackTree == null) { redBlackTree = new RedBlackTree<>(k); }
+		else { redBlackTree.insert(k); }
+
+		System.out.println(redBlackTree.getDeep());
 
 		return Image.create(params.toString());
 	}

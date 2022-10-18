@@ -34,6 +34,7 @@ function addRedBlackTree() {
     let encodeValues = 'k=' + encodeURIComponent(k);
 
     form.reset();
+    form.k.focus();
 
     request('/add-red-black-tree', encodeValues);
 

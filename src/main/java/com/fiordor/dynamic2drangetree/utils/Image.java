@@ -13,6 +13,8 @@ import java.util.Base64;
 import javax.imageio.ImageIO;
 
 public class Image {
+
+    public static final Font FONT = new Font(Font.MONOSPACED, Font.PLAIN, 12);
     
     /**
      * Create image in Base64 with html format, in png and white color
@@ -37,12 +39,11 @@ public class Image {
 
 		BufferedImage bufferedImage = new BufferedImage(500, 500, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2d = bufferedImage.createGraphics();
-		Font font = new Font(Font.MONOSPACED, Font.PLAIN, 12);
-        g2d.setFont(font);
+        g2d.setFont(FONT);
 		g2d.setColor(color);
 
-		int width = stringWidth(text, g2d, font);
-		int height = stringHeight(text, g2d, font);
+		int width = stringWidth(text);
+		int height = stringHeight(text);
 
         int x = (500 / 2) - (width / 2);
         int y = (500 / 2) - (height / 2);
@@ -62,15 +63,21 @@ public class Image {
 
     }
 
-    private static int stringHeight(String text, Graphics2D g2d, Font font) {
-        FontMetrics fontMetrics = g2d.getFontMetrics(font);
+    public static int stringHeight(String text) {
+
+        BufferedImage bufferedImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2d = bufferedImage.createGraphics();
+        FontMetrics fontMetrics = g2d.getFontMetrics(FONT);
 		Rectangle2D bounds = fontMetrics.getStringBounds(text, g2d);
         double raw = bounds.getHeight();
         return raw % 1 == 0 ? (int)raw : (int)raw + 1;
     }
 
-    private static int stringWidth(String text, Graphics2D g2d, Font font) {
-        FontMetrics fontMetrics = g2d.getFontMetrics(font);
+    public static int stringWidth(String text) {
+
+        BufferedImage bufferedImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2d = bufferedImage.createGraphics();
+        FontMetrics fontMetrics = g2d.getFontMetrics(FONT);
 		Rectangle2D bounds = fontMetrics.getStringBounds(text, g2d);
         double raw = bounds.getWidth();
         return raw % 1 == 0 ? (int)raw : (int)raw + 1;
