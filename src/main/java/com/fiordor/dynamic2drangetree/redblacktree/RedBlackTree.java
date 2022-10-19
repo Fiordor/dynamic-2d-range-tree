@@ -1,4 +1,4 @@
-package com.fiordor.dynamic2drangetree.structure;
+package com.fiordor.dynamic2drangetree.redblacktree;
 
 public class RedBlackTree<K extends Comparable<K>> {
     
@@ -32,30 +32,6 @@ public class RedBlackTree<K extends Comparable<K>> {
 
     public void search() {
         
-    }
-
-    public int getDeep() {
-        if (root == null) {
-            return 0;
-        } else {
-            return deepSeach(root, 1);
-        }
-    }
-
-    private int deepSeach(Node<K> leaf, int deep) {
-
-        int left = deep, right = deep;
-
-        if (leaf.getLeft() != null) {
-            left = deepSeach(leaf.getLeft(), deep + 1);
-        }
-
-        if (leaf.getRight() != null) {
-            right = deepSeach(leaf.getRight(), deep + 1);
-        }
-
-        return left > right ? left : right;
-
     }
 
     private Node<K> insertSearch(Node<K> insert, Node<K> parent) {

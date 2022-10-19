@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fiordor.dynamic2drangetree.structure.RedBlackTree;
+import com.fiordor.dynamic2drangetree.redblacktree.RedBlackTree;
 import com.fiordor.dynamic2drangetree.utils.Image;
+import com.fiordor.dynamic2drangetree.utils.ImageLabel;
+import com.fiordor.dynamic2drangetree.utils.ImageRedBlackTree;
 import com.fiordor.dynamic2drangetree.utils.Resource;
 
 @SpringBootApplication
@@ -68,9 +70,17 @@ public class Dynamic2DRangeTreeApplication {
 		if (redBlackTree == null) { redBlackTree = new RedBlackTree<>(k); }
 		else { redBlackTree.insert(k); }
 
-		System.out.println(redBlackTree.getDeep());
+		ImageRedBlackTree<Double> imageRBT = new ImageRedBlackTree<>(redBlackTree);
 
-		return Image.create(params.toString());
+		System.out.println("Labels ------------");
+		ImageLabel[] labels = imageRBT.getLabels();
+		for (int i = 0; i < labels.length; i++) {
+			System.out.println(labels[i].label() + " " + labels[i].x() + " " + labels[i].y());
+		}
+		System.out.println("------------------");
+
+
+		return Image.create(imageRBT.getLabels(), imageRBT.getLines(), imageRBT.getWidth(), imageRBT.getHeight());
 	}
 }
 

@@ -1,4 +1,4 @@
-package com.fiordor.dynamic2drangetree.structure;
+package com.fiordor.dynamic2drangetree.redblacktree;
 
 public class Node<K extends Comparable<K>> implements Comparable<Node<K>> {
 
