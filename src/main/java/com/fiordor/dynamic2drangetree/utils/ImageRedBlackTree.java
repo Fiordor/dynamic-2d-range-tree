@@ -72,7 +72,7 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
         for (int i = 0; i < nodeMatrix.length; i++) {
             for (int j = 0; j < nodeMatrix[i].length; j++) {
                 ImageNode node = nodeMatrix[i][j];
-                dynamicLabels.add(new ImageLabel(node.data, node.x, node.y, node.width, node.height));
+                dynamicLabels.add(new ImageLabel(node.data, node.x, node.y, node.width, node.height, node.isRed));
             }
         }
 
@@ -193,6 +193,6 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
     }
 
     private ImageNode parse(Node<K> node) {
-        return new ImageNode(node.getData().toString(), node.isBlack());
+        return new ImageNode(node.getData().toString(), node.isRed());
     }
 }

@@ -81,7 +81,7 @@ public class Image {
         }
 
         for (int i = 0; i < labels.length; i++) {
-            drawString(labels[i], Color.BLACK, Color.WHITE, MARGIN, g2d);
+            drawString(labels[i], labels[i].b() ? Color.RED : Color.BLACK, Color.WHITE, MARGIN, g2d);
         }
         
 		String imgBase64 = "";

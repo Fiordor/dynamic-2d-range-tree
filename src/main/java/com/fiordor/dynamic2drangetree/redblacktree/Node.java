@@ -2,23 +2,23 @@ package com.fiordor.dynamic2drangetree.redblacktree;
 
 public class Node<K extends Comparable<K>> implements Comparable<Node<K>> {
 
-    public static final boolean BLACK = true;
+    public static final boolean BLACK = false;
     public static final boolean RED = true;
  
     private K data;
     private Node<K> left;
     private Node<K> right;
-    private boolean isBlack;
+    private boolean isRed;
 
     public Node(K data) {
-        this(data, false);
+        this(data, true);
     }
 
-    public Node(K data, boolean isBlack) {
+    public Node(K data, boolean isRed) {
         this.data = data;
         this.left = null;
         this.right = null;
-        this.isBlack = isBlack;
+        this.isRed = isRed;
     }
 
     public K getData() {
@@ -33,8 +33,8 @@ public class Node<K extends Comparable<K>> implements Comparable<Node<K>> {
         return right;
     }
 
-    public boolean isBlack() {
-        return isBlack;
+    public boolean isRed() {
+        return isRed;
     }
 
     public void setData(K data) {
@@ -49,8 +49,8 @@ public class Node<K extends Comparable<K>> implements Comparable<Node<K>> {
         this.right = right;
     }
 
-    public void setBlack(boolean isBlack) {
-        this.isBlack = isBlack;
+    public void setRed(boolean isRed) {
+        this.isRed = isRed;
     }
 
     @Override

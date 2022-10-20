@@ -1,6 +1,9 @@
 
 var viewer = null;
 
+document.getElementById('formRedBlackTree').addEventListener('submit', function(e) { e.preventDefault(); });
+document.getElementById('formRedBlackTree').k.addEventListener('keydown', function(e) { if (e.keyCode == 13) { addRedBlackTree(); }});
+
 function add2DRangeTree() {
 
     let form = document.getElementById('form2DRangeTree');

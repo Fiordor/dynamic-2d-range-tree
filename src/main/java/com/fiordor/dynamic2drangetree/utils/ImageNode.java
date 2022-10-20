@@ -3,7 +3,7 @@ package com.fiordor.dynamic2drangetree.utils;
 public class ImageNode {
     
     public String data;
-    public boolean isBlack;
+    public boolean isRed;
 
     public int x;
     public int y;
@@ -13,12 +13,12 @@ public class ImageNode {
     public ImageNode parent;
 
     public ImageNode() {
-        this(null, false);
+        this(null, true);
     }
 
-    public ImageNode(String data, boolean isBlack) {
+    public ImageNode(String data, boolean isRed) {
         this.data = data;
-        this.isBlack = isBlack;
+        this.isRed = isRed;
         this.x = 0;
         this.y = 0;
         this.width = 0;
