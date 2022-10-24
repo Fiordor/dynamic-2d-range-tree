@@ -2,8 +2,8 @@ package com.fiordor.dynamic2drangetree.redblacktree;
 
 public class RedBlackTree<K extends Comparable<K>> {
 
-    private final boolean BLACK = Node.BLACK;
-    private final boolean RED = Node.RED;
+    //private final boolean BLACK = Node.BLACK;
+    //private final boolean RED = Node.RED;
     
     private Node<K> root;
 
@@ -21,11 +21,15 @@ public class RedBlackTree<K extends Comparable<K>> {
 
     public void insert(K k) {
 
+        /*
         if (root == null) {
             root = new Node<K>(k, Node.BLACK);
         } else {
             insertSearch(new Node<K>(k, Node.RED), root);
         }
+        */
+
+        insertSecondVersion(k);
         
     }
 
@@ -164,6 +168,7 @@ public class RedBlackTree<K extends Comparable<K>> {
     //https://iq.opengenus.org/red-black-tree-insertion/
     //puede que nodo necesite un attrib parent
 
+    /*
     private boolean insertSearch(Node<K> insert, Node<K> parent) {
         
         if (insert.compareTo(parent) < 0) {
@@ -199,4 +204,5 @@ public class RedBlackTree<K extends Comparable<K>> {
             }
         }
     }
+    */
 }
