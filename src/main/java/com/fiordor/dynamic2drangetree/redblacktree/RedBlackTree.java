@@ -119,7 +119,7 @@ public class RedBlackTree<K extends Comparable<K>> {
     private Node<K> centerLeft4Node(Node<K> root) {
         root = rotateRight(root);
         root.setRed(false);
-        root.getLeft().setRed(true);
+        root.getRight().setRed(true);
         return root;
     }
 
