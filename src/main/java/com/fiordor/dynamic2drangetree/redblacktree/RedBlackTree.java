@@ -33,12 +33,58 @@ public class RedBlackTree<K extends Comparable<K>> {
         
     }
 
-    public void remove() {
-        
+    public K deleteMin() {
+        return null;
     }
 
-    public void search() {
-        
+    public boolean search(K data) {
+        Node<K> node = root;
+        while (node != null) {
+            K nodeData = node.getData();
+            if (nodeData.equals(data)) return true;
+            if (nodeData.compareTo(data) < 0) {
+                node = node.getRight();
+            } else {
+                node = node.getLeft();
+            }
+        }
+        //If it hasn't been found, return false.
+        return false;
+    }
+
+    /**
+     * Returns the smallest node K' for which K' > K in the tree.
+     * If there is no such K', the result is null.
+     * @param data
+     * @return
+     */
+    public K successor(K data) {
+        Node<K> res = successor(root, data);
+        if (res == null) return null;
+        return res.getData();
+    }
+
+    private Node<K> successor(Node<K> node, K data) {
+        //Base case
+        if (node == null) return null;
+        //General case
+        int cmp = node.getData().compareTo(data);
+        if (cmp <= 0) {
+            //This node is smaller than or equal to data. It cannot be its successor
+            return successor(node.getRight(), data);
+        } else {
+            //This node could be its successor, or the successor could be in this node's
+            //left child
+            Node<K> res = successor(node.getLeft(), data);
+            //If there was a successor in the left subtree, it is found.
+            //Otherwise...
+            if (res == null) {
+                //All the elements in the left subtree were less than or equal to data.
+                //But this node's data is greater than data. Therefore, it is the successor
+                res = node;
+            }
+            return res;
+        }
     }
 
     //Insertion based on the book of algorithms of Sedgewick
