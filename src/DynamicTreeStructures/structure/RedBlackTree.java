@@ -20,18 +20,44 @@ public class RedBlackTree<K extends Comparable<K>> {
         this.root = new RedBlackTreeNode<>(k);
     }
 
+    /**
+     * Get root of the tree.
+     *
+     * @return root node or null
+     */
     public RedBlackTreeNode<K> getRoot() {
         return root;
     }
 
+    /**
+     * Insertion of value in defined red black tree. Insertion based on the book
+     * of algorithms of Sedgewick and the lecture slides of Algorithms and Data
+     * Structures II at DTU, Inge LiGørtz (2020).
+     *
+     * //SECOND VERSION because we split on the way down.
+     *
+     * @param k value to insert
+     */
     public void insert(K k) {
-        insertSecondVersion(k);
+        root = insert(root, k);
+        root.setRed(false);
     }
 
+    /**
+     * Not implemented already
+     * @return 
+     */
     public K deleteMin() {
         return null;
     }
 
+    /**
+     * Search the value in the tree. Up to down look for the value on each node
+     * like binary seach. If exists return true, if not, return false.
+     *
+     * @param data value to search
+     * @return if the search has been success
+     */
     public boolean search(K data) {
         RedBlackTreeNode<K> node = root;
         while (node != null) {
@@ -45,7 +71,6 @@ public class RedBlackTree<K extends Comparable<K>> {
                 node = node.getLeft();
             }
         }
-        //If it hasn't been found, return false.
         return false;
     }
 
@@ -89,18 +114,8 @@ public class RedBlackTree<K extends Comparable<K>> {
         }
     }
 
-    //Insertion based on the book of algorithms of Sedgewick
-    //and the lecture slides of Algorithms and Data Structures II
-    //at DTU, Inge Li Gørtz (2020)
-    //SECOND VERSION because we split on the way down
-    //Lanzadera
-    public void insertSecondVersion(K data) {
-        root = insertSecondVersion(root, data);
-        root.setRed(false); //Root node is defined as black (makes sense)
-    }
-
     //Returns the sub-tree with the inserted node
-    private RedBlackTreeNode<K> insertSecondVersion(RedBlackTreeNode<K> node, K data) {
+    private RedBlackTreeNode<K> insert(RedBlackTreeNode<K> node, K data) {
         //If the tree is empty (leaf), create the node
         if (node == null) {
             return new RedBlackTreeNode<>(data);
@@ -121,11 +136,11 @@ public class RedBlackTree<K extends Comparable<K>> {
         if (cmp < 0) {
             //The data goes to the left
             RedBlackTreeNode<K> leftNode = node.getLeft();
-            leftNode = insertSecondVersion(leftNode, data);
+            leftNode = insert(leftNode, data);
             node.setLeft(leftNode);
         } else if (cmp > 0) { //The data goes to the right
             RedBlackTreeNode<K> rightNode = node.getRight();
-            rightNode = insertSecondVersion(rightNode, data);
+            rightNode = insert(rightNode, data);
             node.setRight(rightNode);
         } else { //We are in a replacement!
             node.setData(data);
@@ -160,11 +175,11 @@ public class RedBlackTree<K extends Comparable<K>> {
     }
 
     /**
-     * Balances a 4-node that is leaning doubly to the left. Changes colors
-     * accordingly.
+     * Center to left and recolor it. Balances a 4-node that is leaning doubly
+     * to the left. Changes colors accordingly.
      *
-     * @param root
-     * @return
+     * @param root node to center
+     * @return centered left node
      */
     private RedBlackTreeNode<K> centerLeft4Node(RedBlackTreeNode<K> root) {
         root = rotateRight(root);
@@ -174,11 +189,11 @@ public class RedBlackTree<K extends Comparable<K>> {
     }
 
     /**
-     * Balances a 4-node that is leaning doubly to the right. Changes colors
-     * accordingly.
+     * Center to right and recolor it. Balances a 4-node that is leaning doubly
+     * to the right. Changes colors accordingly.
      *
-     * @param root
-     * @return
+     * @param root node to center
+     * @return centered right node
      */
     private RedBlackTreeNode<K> centerRight4Node(RedBlackTreeNode<K> root) {
         root = rotateLeft(root);
@@ -192,8 +207,8 @@ public class RedBlackTree<K extends Comparable<K>> {
      * COLORS, ONLY POSITIONS [For now we don't have a parameter size. If we
      * include it later, we'll have to re-compute it here]
      *
-     * @param oldRoot
-     * @return
+     * @param oldRoot node to rotate
+     * @return rotated right node
      */
     private RedBlackTreeNode<K> rotateRight(RedBlackTreeNode<K> oldRoot) {
         RedBlackTreeNode<K> newRoot = oldRoot.getLeft();
@@ -205,10 +220,10 @@ public class RedBlackTree<K extends Comparable<K>> {
     /**
      * Makes the left node the root of @oldRoot. IMPORTANT: DOES NOT CHANGE
      * COLORS, ONLY POSITIONS [For now we don't have a parameter size. If we
-     * include it later, we'll have to re-compute it here]
+     * include it later, we'll have to re-compute it here].
      *
-     * @param oldRoot
-     * @return
+     * @param oldRoot node to rotate
+     * @return retated left node
      */
     private RedBlackTreeNode<K> rotateLeft(RedBlackTreeNode<K> oldRoot) {
         RedBlackTreeNode<K> newRoot = oldRoot.getRight();
