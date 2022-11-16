@@ -123,10 +123,10 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
 
     /**
      * Asigna la posición y las dimensiones de los nodos. Primero se obtiene el
-     * máximo ancho que opcupa la representación gráfica del árbol. Para cada
-     * fila del árbol primero se saca las dimensiones del nodo, con las
-     * dimensiones se calcula la posición. Siempre se tiene en cuenta los
-     * márgenes indicados. Al final se asigna el alto de la imangen.
+     * máximo ancho que ocupa la representación gráfica del árbol de la fila con
+     * más datos. Para cada fila del árbol primero se saca las dimensiones del
+     * nodo, con las dimensiones se calcula la posición. Siempre se tiene en
+     * cuenta los márgenes indicados. Al final se asigna el alto de la imangen.
      *
      * @param gapWidth espacio entre los datos de una misma fila.
      * @param gapHeight espacio entre la columnas.
@@ -136,6 +136,7 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
         width = 0;
         height = 0;
 
+        /*
         for (int i = 0; i < nodeMatrix.length; i++) {
             int rowWidth = getRowWidth(nodeMatrix[i]);
             if (nodeMatrix[i].length > 0) {
@@ -146,26 +147,27 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
                 width = rowWidth;
             }
         }
-
+         */
         int top = 0;
+        int maxLabelHeight = 0;
+        int maxLabelWidth = 0;
+
         for (int i = 0; i < nodeMatrix.length; i++) {
-
-            int left = 0;
-            int maxHeight = 0, maxWidth = 0;
-
             for (int j = 0; j < nodeMatrix[i].length; j++) {
                 ImageNode node = nodeMatrix[i][j];
 
                 int[] bounds = stringBounds(node.value);
                 node.w = bounds[0];
                 node.h = bounds[1];
-
-                maxWidth += node.w;
+                
+                if (node.w > maxLabelWidth) { maxLabelWidth = node.w; }
+                if (node.h > maxLabelHeight) { maxLabelHeight = node.h; }
             }
+        }
 
-            maxWidth += (nodeMatrix[i].length * gapWidth) - gapWidth;
-            left = width - maxWidth;
-            left = left <= 0 ? 0 : left / 2;
+        for (int i = nodeMatrix.length - 1; i >= 0; i--) {
+
+            int maxHeight = 0, maxWidth = 0, left = 0;
 
             for (int j = 0; j < nodeMatrix[i].length; j++) {
                 ImageNode node = nodeMatrix[i][j];
@@ -237,7 +239,7 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
 
     /**
      * Calculate bounds needs a string into image.
-     * 
+     *
      * @param text label to print into the image
      * @return int[2] where 0 is width and 1 is height
      */
@@ -248,7 +250,7 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
         double rawHeight = bounds.getHeight();
         int w = rawWidth % 1 == 0 ? (int) rawWidth : (int) rawWidth + 1;
         int h = rawHeight % 1 == 0 ? (int) rawHeight : (int) rawHeight + 1;
-        return new int[]{ w, h };
+        return new int[]{w, h};
     }
 
     private ImageNode parse(RedBlackTreeNode<K> node) {
