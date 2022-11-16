@@ -84,7 +84,11 @@ public class Controller {
             redBlackTree.insert(random);
         }
 
-        Image image = new Image(new ImageRedBlackTree<Integer>(redBlackTree, 32, 32));
+        long start = System.currentTimeMillis();
+        ImageRedBlackTree<Integer> irbt = new ImageRedBlackTree<Integer>(redBlackTree, 32, 32);
+        long stop = System.currentTimeMillis();
+        System.out.println("Create image: " + (stop - start));
+        Image image = new Image(irbt);
         this.image = image.create();
 
         canvas.setImage(this.image);

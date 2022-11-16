@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package DynamicTreeStructures.imagegenerator;
 
 import DynamicTreeStructures.structure.RedBlackTree;
@@ -27,6 +23,10 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
 
     private Font font;
 
+    private BufferedImage calcBoundsImg;
+    private Graphics2D calcBoundsG2D;
+    private FontMetrics calcBoundsFontMetrics;
+
     public ImageRedBlackTree(RedBlackTree<K> tree) {
         this(tree, 16, 16, new Font(Font.MONOSPACED, Font.PLAIN, 16));
     }
@@ -38,6 +38,10 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
     public ImageRedBlackTree(RedBlackTree<K> tree, int gapWidth, int gapHeight, Font font) {
 
         this.font = font;
+
+        this.calcBoundsImg = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+        this.calcBoundsG2D = this.calcBoundsImg.createGraphics();
+        this.calcBoundsFontMetrics = this.calcBoundsG2D.getFontMetrics(this.font);
 
         List< List<ImageNode>> rawMatrix = new ArrayList<>();
 
@@ -152,8 +156,9 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
             for (int j = 0; j < nodeMatrix[i].length; j++) {
                 ImageNode node = nodeMatrix[i][j];
 
-                node.w = stringWidth(node.value);
-                node.h = stringHeight(node.value);
+                int[] bounds = stringBounds(node.value);
+                node.w = bounds[0];
+                node.h = bounds[1];
 
                 maxWidth += node.w;
             }
@@ -192,7 +197,7 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
 
         int width = 0;
         for (int i = 0; i < row.length; i++) {
-            width += stringWidth(row[i].value);
+            width += stringBounds(row[i].value)[0];
         }
         return width;
     }
@@ -230,27 +235,20 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
         }
     }
 
-    /*
-                    CAMBIAR ESTO!!!!!!!!!!!!!!!!!!
+    /**
+     * Calculate bounds needs a string into image.
+     * 
+     * @param text label to print into the image
+     * @return int[2] where 0 is width and 1 is height
      */
-    private int stringHeight(String text) {
+    private int[] stringBounds(String text) {
 
-        BufferedImage bufferedImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = bufferedImage.createGraphics();
-        FontMetrics fontMetrics = g2d.getFontMetrics(font);
-        Rectangle2D bounds = fontMetrics.getStringBounds(text, g2d);
-        double raw = bounds.getHeight();
-        return raw % 1 == 0 ? (int) raw : (int) raw + 1;
-    }
-
-    private int stringWidth(String text) {
-
-        BufferedImage bufferedImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = bufferedImage.createGraphics();
-        FontMetrics fontMetrics = g2d.getFontMetrics(font);
-        Rectangle2D bounds = fontMetrics.getStringBounds(text, g2d);
-        double raw = bounds.getWidth();
-        return raw % 1 == 0 ? (int) raw : (int) raw + 1;
+        Rectangle2D bounds = this.calcBoundsFontMetrics.getStringBounds(text, this.calcBoundsG2D);
+        double rawWidth = bounds.getWidth();
+        double rawHeight = bounds.getHeight();
+        int w = rawWidth % 1 == 0 ? (int) rawWidth : (int) rawWidth + 1;
+        int h = rawHeight % 1 == 0 ? (int) rawHeight : (int) rawHeight + 1;
+        return new int[]{ w, h };
     }
 
     private ImageNode parse(RedBlackTreeNode<K> node) {

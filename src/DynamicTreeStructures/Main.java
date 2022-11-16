@@ -1,24 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package DynamicTreeStructures;
 
-import DynamicTreeStructures.imagegenerator.Image;
-import DynamicTreeStructures.imagegenerator.ImageRedBlackTree;
-import DynamicTreeStructures.structure.RedBlackTree;
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.Toolkit;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-import java.util.Random;
-import javax.swing.DefaultListModel;
-import javax.swing.JLabel;
-import javax.swing.ListModel;
 import javax.swing.UIManager;
 
 /**
