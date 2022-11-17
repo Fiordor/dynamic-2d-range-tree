@@ -55,7 +55,7 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
                     nodeMatrix[i][j] = rawMatrix.get(i).get(j);
                 }
             }
-
+            
             assign(gapWidth, gapHeight);
 
         } else {
@@ -136,19 +136,6 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
         width = 0;
         height = 0;
 
-        /*
-        for (int i = 0; i < nodeMatrix.length; i++) {
-            int rowWidth = getRowWidth(nodeMatrix[i]);
-            if (nodeMatrix[i].length > 0) {
-                rowWidth += (nodeMatrix[i].length * gapWidth) - gapWidth;
-            }
-
-            if (rowWidth >= width) {
-                width = rowWidth;
-            }
-        }
-         */
-        int top = 0;
         int maxLabelHeight = 0;
         int maxLabelWidth = 0;
 
@@ -159,49 +146,59 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
                 int[] bounds = stringBounds(node.value);
                 node.w = bounds[0];
                 node.h = bounds[1];
-                
-                if (node.w > maxLabelWidth) { maxLabelWidth = node.w; }
-                if (node.h > maxLabelHeight) { maxLabelHeight = node.h; }
+
+                if (node.w > maxLabelWidth) {
+                    maxLabelWidth = node.w;
+                }
+                if (node.h > maxLabelHeight) {
+                    maxLabelHeight = node.h;
+                }
             }
         }
 
-        for (int i = nodeMatrix.length - 1; i >= 0; i--) {
+        int nodesCant = (int) Math.pow(2, nodeMatrix.length - 1);
+        width = ( nodesCant * maxLabelWidth ) + ( ( nodesCant * gapWidth ) - gapWidth );
+        height = ( nodeMatrix.length * maxLabelHeight ) + ( ( nodesCant * gapHeight ) - gapHeight );
+        
+        System.out.printf("cell dim: %d %d\tnodesCant: %d\n", maxLabelWidth, maxLabelHeight, nodesCant);
+        System.out.printf("img dim: %d %d\n", width, height);
 
-            int maxHeight = 0, maxWidth = 0, left = 0;
+        int top = 0;
+        
+        nodeMatrix[0][0].x = width / 2;
+        nodeMatrix[0][0].h = top;
+        
+        for (int i = 1; i < nodeMatrix.length; i++) {
 
+            int cellWidth = (int) (width / Math.pow(2, i));
+            int left = 0;
+            top += maxLabelHeight;
+            
             for (int j = 0; j < nodeMatrix[i].length; j++) {
                 ImageNode node = nodeMatrix[i][j];
+                
+                boolean right = node.value.compareTo(node.parent.value) > 0;
+                int parentX = node.parent.x + ( right ? 8 : -8 );
 
-                node.x = left;
-                node.y = top + node.h;
-
-                left += node.w + gapWidth;
-                if (node.h >= maxHeight) {
-                    maxHeight = node.h;
+                while (left + cellWidth < parentX) {
+                    left += cellWidth;
+                }
+                if (right) {
+                    left += cellWidth;
                 }
 
+                node.x = left;
+                //node.y = top + node.h;
+                node.y = top;
+
+//                left += node.w- + gapWidth;
+
             }
-            top += maxHeight + gapHeight;
+            top += gapHeight;
         }
-        top -= gapHeight;
+        //top -= gapHeight;
 
-        height = top;
-    }
-
-    /**
-     * Calcula los píxeles que ocupa la suma de strings de una fila en bruto,
-     * sin márgenes
-     *
-     * @param row array de los ImageNode que lee el data
-     * @return suma de la longitud en píxeles de todos los strings
-     */
-    private int getRowWidth(ImageNode[] row) {
-
-        int width = 0;
-        for (int i = 0; i < row.length; i++) {
-            width += stringBounds(row[i].value)[0];
-        }
-        return width;
+        //height = top;
     }
 
     /**

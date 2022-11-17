@@ -56,7 +56,11 @@ public class Controller {
         redBlackTree.insert(value);
         list.addElement(input);
 
-        Image image = new Image(new ImageRedBlackTree<Integer>(redBlackTree, 32, 32));
+        long start = System.currentTimeMillis();
+        ImageRedBlackTree<Integer> irbt = new ImageRedBlackTree<Integer>(redBlackTree, 32, 32);
+        long stop = System.currentTimeMillis();
+        System.out.println("Create image: " + (stop - start) + " ms");
+        Image image = new Image(irbt);
         this.image = image.create();
 
         canvas.setImage(this.image);
@@ -87,7 +91,7 @@ public class Controller {
         long start = System.currentTimeMillis();
         ImageRedBlackTree<Integer> irbt = new ImageRedBlackTree<Integer>(redBlackTree, 32, 32);
         long stop = System.currentTimeMillis();
-        System.out.println("Create image: " + (stop - start));
+        System.out.println("Create image: " + (stop - start) + " ms");
         Image image = new Image(irbt);
         this.image = image.create();
 
