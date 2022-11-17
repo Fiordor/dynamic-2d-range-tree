@@ -28,7 +28,7 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
     private FontMetrics calcBoundsFontMetrics;
 
     public ImageRedBlackTree(RedBlackTree<K> tree) {
-        this(tree, 16, 16, new Font(Font.MONOSPACED, Font.PLAIN, 16));
+        this(tree, 4, 16, new Font(Font.MONOSPACED, Font.PLAIN, 16));
     }
 
     public ImageRedBlackTree(RedBlackTree<K> tree, int gapWidth, int gapHeight) {
@@ -158,15 +158,18 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
 
         int nodesCant = (int) Math.pow(2, nodeMatrix.length - 1);
         width = ( nodesCant * maxLabelWidth ) + ( ( nodesCant * gapWidth ) - gapWidth );
-        height = ( nodeMatrix.length * maxLabelHeight ) + ( ( nodesCant * gapHeight ) - gapHeight );
+        //width = nodesCant * maxLabelWidth;
+        //height = ( nodeMatrix.length * maxLabelHeight ) + ( ( nodesCant * gapHeight ) - gapHeight );
         
+        System.out.printf("width: %d %d %d\n", nodesCant, gapWidth, ( ( nodesCant * gapWidth ) - gapWidth ));
         System.out.printf("cell dim: %d %d\tnodesCant: %d\n", maxLabelWidth, maxLabelHeight, nodesCant);
         System.out.printf("img dim: %d %d\n", width, height);
 
         int top = 0;
         
-        nodeMatrix[0][0].x = width / 2;
+        nodeMatrix[0][0].x = ( width / 2 ) - ( nodeMatrix[0][0].w / 2 );
         nodeMatrix[0][0].h = top;
+        top += maxLabelHeight + gapHeight;
         
         for (int i = 1; i < nodeMatrix.length; i++) {
 
@@ -187,7 +190,7 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
                     left += cellWidth;
                 }
 
-                node.x = left;
+                node.x = left + ( cellWidth / 2) - ( node.w / 2 );
                 //node.y = top + node.h;
                 node.y = top;
 
@@ -196,9 +199,9 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
             }
             top += gapHeight;
         }
-        //top -= gapHeight;
+        top -= gapHeight;
 
-        //height = top;
+        height = top;
     }
 
     /**

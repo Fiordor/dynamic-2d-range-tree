@@ -48,7 +48,7 @@ public class Image {
         BufferedImage bufferedImage = new BufferedImage(fullWidth, fullHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = bufferedImage.createGraphics();
         g2d.setFont(font);
-        g2d.setColor(Color.WHITE);
+        g2d.setColor(new Color(200, 200, 200));
         g2d.fillRect(0, 0, fullWidth, fullHeight);
         g2d.setColor(Color.BLACK);
 
