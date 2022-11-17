@@ -1,4 +1,3 @@
-
 package DynamicTreeStructures;
 
 import java.awt.Graphics;
@@ -13,7 +12,7 @@ import javax.swing.JPanel;
 public class Canvas extends JPanel {
 
     private BufferedImage bufferedImage;
-    
+
     private int x;
     private int y;
     private double zoom;
@@ -24,6 +23,15 @@ public class Canvas extends JPanel {
 
     public Canvas(BufferedImage bufferedImage) {
         this.bufferedImage = bufferedImage;
+        this.x = 0;
+        this.y = 0;
+        this.zoom = 1.0;
+    }
+
+    public void clear() {
+        bufferedImage = null;
+        this.x = 0;
+        this.y = 0;
         this.zoom = 1.0;
     }
 
@@ -33,12 +41,12 @@ public class Canvas extends JPanel {
         this.y = 0;
         this.zoom = 1.0;
     }
-    
+
     public void setPoint(int x, int y) {
         this.x = x;
         this.y = y;
     }
-    
+
     public int[] getPoint() {
         return new int[]{this.x, this.y};
     }
@@ -51,8 +59,6 @@ public class Canvas extends JPanel {
     public void paint(Graphics g) {
         super.paint(g);
         if (bufferedImage != null) {
-
-            //g.drawImage(bufferedImage, 0, 0, null);
             Graphics2D g2d = (Graphics2D) g;
             g2d.scale(zoom, zoom);
             g2d.drawImage(bufferedImage, x, y, this);

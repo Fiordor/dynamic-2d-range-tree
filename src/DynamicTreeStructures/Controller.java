@@ -36,7 +36,7 @@ public class Controller {
         this.redBlackTree = new RedBlackTree<>();
         this.list = new DefaultListModel<>();
         this.zoom = 1.0;
-        
+
         canvas.setBackground(Color.WHITE);
 
         canvas.setBounds(0, 0, panel.getWidth(), panel.getHeight());
@@ -46,7 +46,7 @@ public class Controller {
     public DefaultListModel<String> getList() {
         return list;
     }
-    
+
     public void setSize(int w, int h) {
         canvas.setSize(w, h);
     }
@@ -65,6 +65,15 @@ public class Controller {
 
         canvas.setImage(this.image);
         canvas.repaint();
+    }
+
+    public void clear() {
+        this.canvas.clear();
+        this.canvas.repaint();
+        
+        this.redBlackTree = new RedBlackTree<>();
+        this.list.clear();
+        this.zoom = 1.0;
     }
 
     public void search(String value) {
@@ -98,24 +107,24 @@ public class Controller {
         canvas.setImage(this.image);
         canvas.repaint();
     }
-    
+
     public void movePressed(int x, int y) {
         canvasX = x - canvas.getPoint()[0];
         canvasY = y - canvas.getPoint()[1];
     }
-    
+
     public void moveDragged(int x, int y) {
         canvas.setPoint(x - canvasX, y - canvasY);
         canvas.repaint();
     }
-    
+
     public void moveReleased() {
-        
+
     }
 
     public void zoom(int zoom) {
 
-        this.zoom = this.zoom - ( zoom / 10.0) ;
+        this.zoom = this.zoom - (zoom / 10.0);
 
         int w = this.image.getWidth();
         int h = this.image.getHeight();

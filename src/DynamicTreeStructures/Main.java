@@ -51,6 +51,9 @@ public class Main extends javax.swing.JFrame {
         ltValues = new javax.swing.JList<>();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        miSave = new javax.swing.JMenuItem();
+        miClear = new javax.swing.JMenuItem();
+        miExit = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -136,6 +139,29 @@ public class Main extends javax.swing.JFrame {
         spListValues.setViewportView(ltValues);
 
         jMenu1.setText("File");
+
+        miSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        miSave.setText("Save");
+        jMenu1.add(miSave);
+
+        miClear.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        miClear.setText("Clear");
+        miClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miClearActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miClear);
+
+        miExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        miExit.setText("Exit");
+        miExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miExitActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miExit);
+
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Structure");
@@ -238,6 +264,15 @@ public class Main extends javax.swing.JFrame {
         spListValues.revalidate();
     }//GEN-LAST:event_formComponentResized
 
+    private void miExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miExitActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_miExitActionPerformed
+
+    private void miClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miClearActionPerformed
+        // TODO add your handling code here:
+        controller.clear();
+    }//GEN-LAST:event_miClearActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -265,6 +300,9 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JList<String> ltValues;
+    private javax.swing.JMenuItem miClear;
+    private javax.swing.JMenuItem miExit;
+    private javax.swing.JMenuItem miSave;
     private javax.swing.JPanel pnCanvas;
     private javax.swing.JScrollPane spListValues;
     private javax.swing.JTextField tfInput;
