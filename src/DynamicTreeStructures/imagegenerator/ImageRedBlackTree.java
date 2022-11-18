@@ -165,11 +165,10 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
         System.out.printf("cell dim: %d %d\tnodesCant: %d\n", maxLabelWidth, maxLabelHeight, nodesCant);
         System.out.printf("img dim: %d %d\n", width, height);
 
-        int top = 0;
-        
+        int top = maxLabelHeight;
         nodeMatrix[0][0].x = ( width / 2 ) - ( nodeMatrix[0][0].w / 2 );
         nodeMatrix[0][0].h = top;
-        top += maxLabelHeight + gapHeight;
+        top += gapHeight;
         
         for (int i = 1; i < nodeMatrix.length; i++) {
 

@@ -1,4 +1,3 @@
-
 package DynamicTreeStructures;
 
 import com.formdev.flatlaf.FlatLightLaf;
@@ -12,7 +11,7 @@ import javax.swing.UIManager;
  * @author Fiordor
  */
 public class Main extends javax.swing.JFrame {
-    
+
     private Controller controller;
 
     /**
@@ -25,9 +24,11 @@ public class Main extends javax.swing.JFrame {
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
 
         pnCanvas.setBackground(Color.WHITE);
-        
+
         controller = new Controller(pnCanvas);
         ltValues.setModel(controller.getList());
+
+        getContentPane().setBackground(new Color(150, 150, 150));
 
         setTitle("Dynamic Tree Structures");
     }
@@ -54,6 +55,11 @@ public class Main extends javax.swing.JFrame {
         miSave = new javax.swing.JMenuItem();
         miClear = new javax.swing.JMenuItem();
         miExit = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        miAdd = new javax.swing.JMenuItem();
+        miGenerate = new javax.swing.JMenuItem();
+        miSearch = new javax.swing.JMenuItem();
+        miRemove = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -136,6 +142,8 @@ public class Main extends javax.swing.JFrame {
             }
         });
 
+        spListValues.setPreferredSize(new java.awt.Dimension(0, 0));
+
         spListValues.setViewportView(ltValues);
 
         jMenu1.setText("File");
@@ -164,6 +172,46 @@ public class Main extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu1);
 
+        jMenu3.setText("Operation");
+
+        miAdd.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
+        miAdd.setText("Add");
+        miAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miAddActionPerformed(evt);
+            }
+        });
+        jMenu3.add(miAdd);
+
+        miGenerate.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0));
+        miGenerate.setText("Generate");
+        miGenerate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miGenerateActionPerformed(evt);
+            }
+        });
+        jMenu3.add(miGenerate);
+
+        miSearch.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F3, 0));
+        miSearch.setText("Search");
+        miSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miSearchActionPerformed(evt);
+            }
+        });
+        jMenu3.add(miSearch);
+
+        miRemove.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, 0));
+        miRemove.setText("Remove");
+        miRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miRemoveActionPerformed(evt);
+            }
+        });
+        jMenu3.add(miRemove);
+
+        jMenuBar1.add(jMenu3);
+
         jMenu2.setText("Structure");
         jMenuBar1.add(jMenu2);
 
@@ -175,11 +223,11 @@ public class Main extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(spListValues, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(tfInput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(spListValues, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -189,7 +237,7 @@ public class Main extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btGenerate))
                     .addComponent(pnCanvas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 16, Short.MAX_VALUE))
+                .addGap(16, 16, 16))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -202,76 +250,83 @@ public class Main extends javax.swing.JFrame {
                     .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btGenerate, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(spListValues, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
                     .addComponent(pnCanvas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addGap(16, 16, 16))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSearchActionPerformed
-        // TODO add your handling code here:
-        controller.search(tfInput.getText());
-        tfInput.setText("");
-    }//GEN-LAST:event_btSearchActionPerformed
 
     private void btGenerateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btGenerateActionPerformed
-        // TODO add your handling code here:
         controller.generate(tfInput.getText());
         tfInput.setText("");
+        tfInput.requestFocus();
     }//GEN-LAST:event_btGenerateActionPerformed
 
     private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
-        // TODO add your handling code here:
         controller.add(tfInput.getText());
         tfInput.setText("");
+        tfInput.requestFocus();
     }//GEN-LAST:event_btAddActionPerformed
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
-        // TODO add your handling code here:
         controller.remove(tfInput.getText());
         tfInput.setText("");
+        tfInput.requestFocus();
     }//GEN-LAST:event_btRemoveActionPerformed
 
     private void pnCanvasMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_pnCanvasMouseWheelMoved
-        // TODO add your handling code here:
         controller.zoom(evt.getWheelRotation());
     }//GEN-LAST:event_pnCanvasMouseWheelMoved
 
     private void pnCanvasMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnCanvasMouseDragged
-        // TODO add your handling code here:
         controller.moveDragged(evt.getX(), evt.getY());
     }//GEN-LAST:event_pnCanvasMouseDragged
 
     private void pnCanvasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnCanvasMousePressed
-        // TODO add your handling code here:
         controller.movePressed(evt.getX(), evt.getY());
     }//GEN-LAST:event_pnCanvasMousePressed
 
     private void pnCanvasMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnCanvasMouseReleased
-        // TODO add your handling code here:
         controller.moveReleased();
     }//GEN-LAST:event_pnCanvasMouseReleased
 
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
-        // TODO add your handling code here:
-        pnCanvas.setSize(getWidth() - 204, getHeight() - 109);
         controller.setSize(pnCanvas.getWidth(), pnCanvas.getHeight());
-        spListValues.setSize(spListValues.getWidth(), getHeight() - 109);
-        
-        spListValues.revalidate();
     }//GEN-LAST:event_formComponentResized
 
     private void miExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miExitActionPerformed
-        // TODO add your handling code here:
+        System.exit(0);
     }//GEN-LAST:event_miExitActionPerformed
 
     private void miClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miClearActionPerformed
-        // TODO add your handling code here:
         controller.clear();
     }//GEN-LAST:event_miClearActionPerformed
+
+    private void miSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSearchActionPerformed
+        btSearchActionPerformed(null);
+    }//GEN-LAST:event_miSearchActionPerformed
+
+    private void miAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddActionPerformed
+        btAddActionPerformed(null);
+    }//GEN-LAST:event_miAddActionPerformed
+
+    private void btSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSearchActionPerformed
+        controller.search(tfInput.getText());
+        tfInput.setText("");
+        tfInput.requestFocus();
+    }//GEN-LAST:event_btSearchActionPerformed
+
+    private void miGenerateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miGenerateActionPerformed
+        btGenerateActionPerformed(null);
+    }//GEN-LAST:event_miGenerateActionPerformed
+
+    private void miRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miRemoveActionPerformed
+        btRemoveActionPerformed(null);
+    }//GEN-LAST:event_miRemoveActionPerformed
 
     /**
      * @param args the command line arguments
@@ -298,11 +353,16 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JButton btSearch;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JList<String> ltValues;
+    private javax.swing.JMenuItem miAdd;
     private javax.swing.JMenuItem miClear;
     private javax.swing.JMenuItem miExit;
+    private javax.swing.JMenuItem miGenerate;
+    private javax.swing.JMenuItem miRemove;
     private javax.swing.JMenuItem miSave;
+    private javax.swing.JMenuItem miSearch;
     private javax.swing.JPanel pnCanvas;
     private javax.swing.JScrollPane spListValues;
     private javax.swing.JTextField tfInput;

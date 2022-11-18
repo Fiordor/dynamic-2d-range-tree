@@ -52,6 +52,9 @@ public class Controller {
     }
 
     public void add(String input) {
+        if (input.length() == 0) {
+            return;
+        }
         int value = Integer.parseInt(input);
         redBlackTree.insert(value);
         list.addElement(input);
@@ -70,21 +73,28 @@ public class Controller {
     public void clear() {
         this.canvas.clear();
         this.canvas.repaint();
-        
+
         this.redBlackTree = new RedBlackTree<>();
         this.list.clear();
         this.zoom = 1.0;
     }
 
-    public void search(String value) {
-
+    public void search(String input) {
+        if (input.length() == 0) {
+            return;
+        }
     }
 
-    public void remove(String value) {
-
+    public void remove(String input) {
+        if (input.length() == 0) {
+            return;
+        }
     }
 
     public void generate(String input) {
+        if (input.length() == 0) {
+            return;
+        }
         int k = Integer.parseInt(input);
 
         Random r = new Random();
@@ -125,14 +135,14 @@ public class Controller {
     public void zoom(int zoom) {
 
         this.zoom = this.zoom - (zoom / 10.0);
-
-        int w = this.image.getWidth();
-        int h = this.image.getHeight();
-        BufferedImage scaledImage = new BufferedImage((w * 2), (h * 2), BufferedImage.TYPE_INT_ARGB);
+        
+        int w = (int)Math.ceil(this.image.getWidth() * (this.zoom > 0 ? this.zoom : 1 ));
+        int h = (int)Math.ceil(this.image.getHeight() * (this.zoom > 0 ? this.zoom : 1 ));
+        BufferedImage scaledImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         AffineTransform at = AffineTransform.getScaleInstance(this.zoom, this.zoom);
         AffineTransformOp ato = new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC);
         scaledImage = ato.filter(image, scaledImage);
-
+        
         canvas.setImage(scaledImage);
         canvas.repaint();
     }
