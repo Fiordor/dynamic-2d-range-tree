@@ -62,4 +62,13 @@ public class RedBlackTreeNode<K extends Comparable<K>> implements Comparable<Red
     public int compareTo(RedBlackTreeNode<K> k) {
         return data.compareTo(k.getData());
     }
+
+    @Override
+    public String toString() {
+        String l = left == null ? "null" : left.data.toString();
+        String d = data.toString();
+        String c = isRed ? "red" : "black";
+        String r = right == null ? "null" : right.data.toString();
+        return String.format("[%s,%s,%s,%s]", l, d, c, r);
+    }
 }

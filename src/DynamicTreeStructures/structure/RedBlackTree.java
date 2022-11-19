@@ -233,4 +233,9 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<K>{
         newRoot.setLeft(oldRoot);
         return newRoot;
     }
+
+    @Override
+    public String toString() {
+        return super.toString(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+    }
 }
