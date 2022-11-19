@@ -52,14 +52,6 @@ public class Image {
         g2d.fillRect(0, 0, fullWidth, fullHeight);
         g2d.setColor(Color.BLACK);
 
-        g2d.setColor(Color.RED);
-        lastColor = Color.RED;
-        g2d.fillRect(0, 0, fullWidth, margin);
-        g2d.fillRect(0, fullHeight - margin, fullWidth, margin);
-
-        g2d.fillRect(0, 0, margin, fullHeight);
-        g2d.fillRect(fullWidth - margin, 0, margin, fullHeight);
-
         for (int i = 0; i < lines.length; i++) {
             drawLine(lines[i], margin, g2d);
         }

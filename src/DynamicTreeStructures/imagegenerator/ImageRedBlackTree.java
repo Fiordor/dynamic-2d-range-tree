@@ -170,8 +170,6 @@ public class ImageRedBlackTree<K extends Comparable<K>> implements TreeImage {
         //System.out.printf("width: %d %d %d\n", nodesCant, gapWidth, ( ( nodesCant * gapWidth ) - gapWidth ));
         //System.out.printf("cell dim: %d %d\tnodesCant: %d\n", maxLabelWidth, maxLabelHeight, nodesCant);
         //System.out.printf("img dim: %d %d\n", width, height);
-
-        System.out.println(maxLabelHeight);
         
         int top = maxLabelHeight;
         nodeMatrix[0][0].x = ( width / 2 ) - ( nodeMatrix[0][0].w / 2 );
