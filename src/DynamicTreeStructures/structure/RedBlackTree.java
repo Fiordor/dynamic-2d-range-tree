@@ -1,13 +1,13 @@
 
 package DynamicTreeStructures.structure;
 
-import DynamicTreeStructures.interfaces.TreeOp;
+import DynamicTreeStructures.interfaces.TreeStructure;
 
 /**
  *
  * @author Fiordor
  */
-public class RedBlackTree<K extends Comparable<K>> implements TreeOp<K>{
+public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<K>{
 
     private RedBlackTreeNode<K> root;
 

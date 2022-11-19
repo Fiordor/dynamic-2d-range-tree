@@ -8,7 +8,7 @@ package DynamicTreeStructures.interfaces;
  *
  * @author Fiordor
  */
-public interface TreeOp<K> {
+public interface TreeStructure<K> {
     
     public void insert(K data);
     

@@ -1,5 +1,6 @@
 package DynamicTreeStructures.imagegenerator;
 
+import DynamicTreeStructures.interfaces.TreeImage;
 import DynamicTreeStructures.structure.RedBlackTree;
 import DynamicTreeStructures.structure.RedBlackTreeNode;
 import java.awt.Color;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
  *
  * @author Fiordor
  */
-public class ImageRedBlackTree<K extends Comparable<K>> {
+public class ImageRedBlackTree<K extends Comparable<K>> implements TreeImage {
 
     private ImageNode[][] nodeMatrix;
     private int width;
@@ -63,6 +64,7 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
         }
     }
 
+    @Override
     public ImageLine[] getLines() {
 
         List<ImageLine> dynamicLines = new ArrayList<>();
@@ -90,6 +92,7 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
         return lines;
     }
 
+    @Override
     public ImageLabel[] getLabels() {
 
         List<ImageLabel> dynamicLabels = new ArrayList<>();
@@ -109,14 +112,17 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
         return labels;
     }
 
+    @Override
     public Font getFont() {
         return font;
     }
 
+    @Override
     public int getHeight() {
         return height;
     }
 
+    @Override
     public int getWidth() {
         return width;
     }
@@ -161,14 +167,18 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
         //width = nodesCant * maxLabelWidth;
         //height = ( nodeMatrix.length * maxLabelHeight ) + ( ( nodesCant * gapHeight ) - gapHeight );
         
-        System.out.printf("width: %d %d %d\n", nodesCant, gapWidth, ( ( nodesCant * gapWidth ) - gapWidth ));
-        System.out.printf("cell dim: %d %d\tnodesCant: %d\n", maxLabelWidth, maxLabelHeight, nodesCant);
-        System.out.printf("img dim: %d %d\n", width, height);
+        //System.out.printf("width: %d %d %d\n", nodesCant, gapWidth, ( ( nodesCant * gapWidth ) - gapWidth ));
+        //System.out.printf("cell dim: %d %d\tnodesCant: %d\n", maxLabelWidth, maxLabelHeight, nodesCant);
+        //System.out.printf("img dim: %d %d\n", width, height);
 
+        System.out.println(maxLabelHeight);
+        
         int top = maxLabelHeight;
         nodeMatrix[0][0].x = ( width / 2 ) - ( nodeMatrix[0][0].w / 2 );
-        nodeMatrix[0][0].h = top;
+        nodeMatrix[0][0].y = top;
         top += gapHeight;
+        
+        
         
         for (int i = 1; i < nodeMatrix.length; i++) {
 
@@ -180,7 +190,7 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
                 ImageNode node = nodeMatrix[i][j];
                 
                 boolean right = node.value.compareTo(node.parent.value) > 0;
-                int parentX = node.parent.x + ( right ? 8 : -8 );
+                int parentX = node.parent.x;
 
                 while (left + cellWidth < parentX) {
                     left += cellWidth;
@@ -190,10 +200,7 @@ public class ImageRedBlackTree<K extends Comparable<K>> {
                 }
 
                 node.x = left + ( cellWidth / 2) - ( node.w / 2 );
-                //node.y = top + node.h;
                 node.y = top;
-
-//                left += node.w- + gapWidth;
 
             }
             top += gapHeight;

@@ -1,6 +1,6 @@
-
 package DynamicTreeStructures.imagegenerator;
 
+import DynamicTreeStructures.interfaces.TreeImage;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -21,13 +21,13 @@ public class Image {
 
     private Color lastColor;
 
-    public Image(ImageRedBlackTree redBlackTree) {
-        font = redBlackTree.getFont();
-        labels = redBlackTree.getLabels();
-        lines = redBlackTree.getLines();
+    public Image(TreeImage treeImage) {
+        font = treeImage.getFont();
+        labels = treeImage.getLabels();
+        lines = treeImage.getLines();
 
-        minWidth = redBlackTree.getWidth();
-        minHeight = redBlackTree.getHeight();
+        minWidth = treeImage.getWidth();
+        minHeight = treeImage.getHeight();
 
         lastColor = Color.BLACK;
     }
@@ -51,6 +51,14 @@ public class Image {
         g2d.setColor(new Color(200, 200, 200));
         g2d.fillRect(0, 0, fullWidth, fullHeight);
         g2d.setColor(Color.BLACK);
+
+        g2d.setColor(Color.RED);
+        lastColor = Color.RED;
+        g2d.fillRect(0, 0, fullWidth, margin);
+        g2d.fillRect(0, fullHeight - margin, fullWidth, margin);
+
+        g2d.fillRect(0, 0, margin, fullHeight);
+        g2d.fillRect(fullWidth - margin, 0, margin, fullHeight);
 
         for (int i = 0; i < lines.length; i++) {
             drawLine(lines[i], margin, g2d);

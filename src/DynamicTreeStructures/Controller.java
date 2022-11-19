@@ -59,15 +59,7 @@ public class Controller {
         redBlackTree.insert(value);
         list.addElement(input);
 
-        long start = System.currentTimeMillis();
-        ImageRedBlackTree<Integer> irbt = new ImageRedBlackTree<Integer>(redBlackTree);
-        long stop = System.currentTimeMillis();
-        System.out.println("Create image: " + (stop - start) + " ms");
-        Image image = new Image(irbt);
-        this.image = image.create();
-
-        canvas.setImage(this.image);
-        canvas.repaint();
+        print();
     }
 
     public void clear() {
@@ -107,15 +99,7 @@ public class Controller {
             redBlackTree.insert(random);
         }
 
-        long start = System.currentTimeMillis();
-        ImageRedBlackTree<Integer> irbt = new ImageRedBlackTree<Integer>(redBlackTree);
-        long stop = System.currentTimeMillis();
-        System.out.println("Create image: " + (stop - start) + " ms");
-        Image image = new Image(irbt);
-        this.image = image.create();
-
-        canvas.setImage(this.image);
-        canvas.repaint();
+        print();
     }
 
     public void movePressed(int x, int y) {
@@ -135,15 +119,27 @@ public class Controller {
     public void zoom(int zoom) {
 
         this.zoom = this.zoom - (zoom / 10.0);
-        
-        int w = (int)Math.ceil(this.image.getWidth() * (this.zoom > 0 ? this.zoom : 1 ));
-        int h = (int)Math.ceil(this.image.getHeight() * (this.zoom > 0 ? this.zoom : 1 ));
+
+        int w = (int) Math.ceil(this.image.getWidth() * (this.zoom > 0 ? this.zoom : 1));
+        int h = (int) Math.ceil(this.image.getHeight() * (this.zoom > 0 ? this.zoom : 1));
         BufferedImage scaledImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         AffineTransform at = AffineTransform.getScaleInstance(this.zoom, this.zoom);
         AffineTransformOp ato = new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC);
         scaledImage = ato.filter(image, scaledImage);
-        
+
         canvas.setImage(scaledImage);
+        canvas.repaint();
+    }
+
+    private void print() {
+        long start = System.currentTimeMillis();
+        ImageRedBlackTree<Integer> irbt = new ImageRedBlackTree<Integer>(redBlackTree, 16 ,16);
+        long stop = System.currentTimeMillis();
+        System.out.println("Create image: " + (stop - start) + " ms");
+        Image image = new Image(irbt);
+        this.image = image.create();
+
+        canvas.setImage(this.image);
         canvas.repaint();
     }
 }
