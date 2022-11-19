@@ -46,7 +46,7 @@ public class Main extends javax.swing.JFrame {
         tfInput = new javax.swing.JTextField();
         btAdd = new javax.swing.JButton();
         btSearch = new javax.swing.JButton();
-        btRemove = new javax.swing.JButton();
+        btDelete = new javax.swing.JButton();
         btGenerate = new javax.swing.JButton();
         spListValues = new javax.swing.JScrollPane();
         ltValues = new javax.swing.JList<>();
@@ -59,8 +59,10 @@ public class Main extends javax.swing.JFrame {
         miAdd = new javax.swing.JMenuItem();
         miGenerate = new javax.swing.JMenuItem();
         miSearch = new javax.swing.JMenuItem();
-        miRemove = new javax.swing.JMenuItem();
+        miDelete = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
+        cbmRootedBinary = new javax.swing.JCheckBoxMenuItem();
+        cbmRedblack = new javax.swing.JCheckBoxMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -124,12 +126,12 @@ public class Main extends javax.swing.JFrame {
             }
         });
 
-        btRemove.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btRemove.setText("REMOVE");
-        btRemove.setToolTipText("Remove value (Ctrl + R)");
-        btRemove.addActionListener(new java.awt.event.ActionListener() {
+        btDelete.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btDelete.setText("DELETE");
+        btDelete.setToolTipText("Remove value (Ctrl + R)");
+        btDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btRemoveActionPerformed(evt);
+                btDeleteActionPerformed(evt);
             }
         });
 
@@ -201,18 +203,35 @@ public class Main extends javax.swing.JFrame {
         });
         jMenu3.add(miSearch);
 
-        miRemove.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, 0));
-        miRemove.setText("Remove");
-        miRemove.addActionListener(new java.awt.event.ActionListener() {
+        miDelete.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, 0));
+        miDelete.setText("Delete");
+        miDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miRemoveActionPerformed(evt);
+                miDeleteActionPerformed(evt);
             }
         });
-        jMenu3.add(miRemove);
+        jMenu3.add(miDelete);
 
         jMenuBar1.add(jMenu3);
 
         jMenu2.setText("Structure");
+
+        cbmRootedBinary.setText("Rooted binary tree");
+        cbmRootedBinary.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbmMenu(evt);
+            }
+        });
+        jMenu2.add(cbmRootedBinary);
+
+        cbmRedblack.setText("Red black tree");
+        cbmRedblack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbmMenu(evt);
+            }
+        });
+        jMenu2.add(cbmRedblack);
+
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
@@ -233,7 +252,7 @@ public class Main extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btSearch)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btRemove)
+                        .addComponent(btDelete)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btGenerate))
                     .addComponent(pnCanvas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -247,7 +266,7 @@ public class Main extends javax.swing.JFrame {
                     .addComponent(tfInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btGenerate, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -272,11 +291,11 @@ public class Main extends javax.swing.JFrame {
         tfInput.requestFocus();
     }//GEN-LAST:event_btAddActionPerformed
 
-    private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
-        controller.remove(tfInput.getText());
+    private void btDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDeleteActionPerformed
+        controller.delete(tfInput.getText());
         tfInput.setText("");
         tfInput.requestFocus();
-    }//GEN-LAST:event_btRemoveActionPerformed
+    }//GEN-LAST:event_btDeleteActionPerformed
 
     private void pnCanvasMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_pnCanvasMouseWheelMoved
         controller.zoom(evt.getWheelRotation());
@@ -324,9 +343,21 @@ public class Main extends javax.swing.JFrame {
         btGenerateActionPerformed(null);
     }//GEN-LAST:event_miGenerateActionPerformed
 
-    private void miRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miRemoveActionPerformed
-        btRemoveActionPerformed(null);
-    }//GEN-LAST:event_miRemoveActionPerformed
+    private void miDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDeleteActionPerformed
+        btDeleteActionPerformed(null);
+    }//GEN-LAST:event_miDeleteActionPerformed
+
+    private void cbmMenu(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbmMenu
+        
+        cbmRootedBinary.setSelected(false);
+        cbmRedblack.setSelected(false);
+        
+        if (evt.getSource() == cbmRootedBinary) {
+            cbmRootedBinary.setSelected(true);
+        } else if (evt.getSource() == cbmRedblack) {
+            cbmRedblack.setSelected(true);
+        }
+    }//GEN-LAST:event_cbmMenu
 
     /**
      * @param args the command line arguments
@@ -348,9 +379,11 @@ public class Main extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAdd;
+    private javax.swing.JButton btDelete;
     private javax.swing.JButton btGenerate;
-    private javax.swing.JButton btRemove;
     private javax.swing.JButton btSearch;
+    private javax.swing.JCheckBoxMenuItem cbmRedblack;
+    private javax.swing.JCheckBoxMenuItem cbmRootedBinary;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
@@ -358,9 +391,9 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JList<String> ltValues;
     private javax.swing.JMenuItem miAdd;
     private javax.swing.JMenuItem miClear;
+    private javax.swing.JMenuItem miDelete;
     private javax.swing.JMenuItem miExit;
     private javax.swing.JMenuItem miGenerate;
-    private javax.swing.JMenuItem miRemove;
     private javax.swing.JMenuItem miSave;
     private javax.swing.JMenuItem miSearch;
     private javax.swing.JPanel pnCanvas;

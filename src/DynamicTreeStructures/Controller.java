@@ -85,7 +85,7 @@ public class Controller {
         }
     }
 
-    public void remove(String input) {
+    public void delete(String input) {
         if (input.length() == 0) {
             return;
         }
