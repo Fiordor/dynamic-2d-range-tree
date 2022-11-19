@@ -1,4 +1,3 @@
-
 package DynamicTreeStructures.imagegenerator;
 
 import java.awt.Color;
@@ -8,19 +7,23 @@ import java.awt.Color;
  * @author Fiordor
  */
 public class ImageNode {
-    
+
     public String value;
     public int x;
     public int y;
     public int w;
     public int h;
-    
+
     public Color c;
-    
+
     public ImageNode parent;
-    
+
     public ImageNode() {
         this(null, Color.BLACK);
+    }
+
+    public ImageNode(String value) {
+        this(value, Color.BLACK);
     }
 
     public ImageNode(String value, Color c) {

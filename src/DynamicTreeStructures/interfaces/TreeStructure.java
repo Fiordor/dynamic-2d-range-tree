@@ -4,11 +4,16 @@
  */
 package DynamicTreeStructures.interfaces;
 
+import DynamicTreeStructures.structure.Node;
+
 /**
  *
  * @author Fiordor
+ * @param <K>
  */
-public interface TreeStructure<K> {
+public interface TreeStructure<K extends Comparable<K>> {
+    
+    public Node<K> getRoot();
     
     public void insert(K data);
     
