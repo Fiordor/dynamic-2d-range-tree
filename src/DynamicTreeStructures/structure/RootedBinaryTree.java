@@ -9,17 +9,18 @@ import DynamicTreeStructures.interfaces.TreeStructure;
 /**
  *
  * @author Fiordor
+ * @param <K>
  */
 public class RootedBinaryTree<K extends Comparable<K>> implements TreeStructure<K> {
 
     private Node<K> root;
 
     public RootedBinaryTree() {
-        this(null);
+        this.root = null;
     }
 
     public RootedBinaryTree(K data) {
-        this.root = root;
+        this.root = new Node<>(data);
     }
 
     @Override
@@ -30,7 +31,9 @@ public class RootedBinaryTree<K extends Comparable<K>> implements TreeStructure<
     @Override
     public void insert(K data) {
         if (this.root != null) {
-            insertNext(root, data);
+            insertNext(this.root, data);
+        } else {
+            this.root = new Node<>(data);
         }
     }
 
@@ -46,17 +49,17 @@ public class RootedBinaryTree<K extends Comparable<K>> implements TreeStructure<
 
     private void insertNext(Node<K> node, K data) {
 
-        if (node.getData().compareTo(data) < 0) {
+        if (data.compareTo(node.getData()) < 0) {
 
             if (node.getLeft() == null) {
-                node.setLeft(new Node<K>(data));
+                node.setLeft(new Node<>(data));
             } else {
                 insertNext(node.getLeft(), data);
             }
         } else {
 
             if (node.getRight() == null) {
-                node.setRight(new Node<K>(data));
+                node.setRight(new Node<>(data));
             } else {
                 insertNext(node.getRight(), data);
             }

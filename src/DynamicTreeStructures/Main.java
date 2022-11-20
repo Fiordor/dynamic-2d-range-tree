@@ -25,7 +25,8 @@ public class Main extends javax.swing.JFrame {
 
         pnCanvas.setBackground(Color.WHITE);
 
-        controller = new Controller(pnCanvas);
+        cbmRedblack.setSelected(true);
+        controller = new Controller(pnCanvas, Controller.RED_BLACK_TREE);
         ltValues.setModel(controller.getList());
 
         getContentPane().setBackground(new Color(150, 150, 150));
@@ -354,8 +355,10 @@ public class Main extends javax.swing.JFrame {
         
         if (evt.getSource() == cbmRootedBinary) {
             cbmRootedBinary.setSelected(true);
+            controller.setTreeType(Controller.ROOTED_BINARY_TREE);
         } else if (evt.getSource() == cbmRedblack) {
             cbmRedblack.setSelected(true);
+            controller.setTreeType(Controller.RED_BLACK_TREE);
         }
     }//GEN-LAST:event_cbmMenu
 

@@ -1,6 +1,7 @@
 package DynamicTreeStructures.imagegenerator;
 
 import DynamicTreeStructures.interfaces.TreeImage;
+import DynamicTreeStructures.structure.RedBlackTree;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;

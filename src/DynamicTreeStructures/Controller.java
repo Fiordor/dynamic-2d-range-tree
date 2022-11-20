@@ -2,7 +2,11 @@ package DynamicTreeStructures;
 
 import DynamicTreeStructures.imagegenerator.Image;
 import DynamicTreeStructures.imagegenerator.ImageRedBlackTree;
+import DynamicTreeStructures.imagegenerator.ImageTree;
+import DynamicTreeStructures.interfaces.TreeImage;
+import DynamicTreeStructures.interfaces.TreeStructure;
 import DynamicTreeStructures.structure.RedBlackTree;
+import DynamicTreeStructures.structure.RootedBinaryTree;
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
@@ -21,7 +25,18 @@ import javax.swing.JPanel;
  */
 public class Controller {
 
+    public final static int BALANCED_BINARY_TREE = 0;
+    public final static int COMPLETE_BINARY_TREE = 1;
+    public final static int DEGENERATE_BINARY_TREE = 2;
+    public final static int PERFECT_BINARY_TREE = 3;
+    public final static int ROOTED_BINARY_TREE = 4;
+    public final static int RED_BLACK_TREE = 5;
+
+    private int type;
+
+    private TreeStructure<Integer> tree;
     private RedBlackTree<Integer> redBlackTree;
+
     private DefaultListModel<String> list;
 
     private Canvas canvas;
@@ -32,15 +47,44 @@ public class Controller {
     private double zoom;
 
     public Controller(JPanel panel) {
-        this.canvas = new Canvas();
-        this.redBlackTree = new RedBlackTree<>();
+        this(panel, RED_BLACK_TREE);
+    }
+
+    public Controller(JPanel panel, int type) {
+
+        setTreeType(type);
         this.list = new DefaultListModel<>();
+        this.canvas = new Canvas();
         this.zoom = 1.0;
 
         canvas.setBackground(Color.WHITE);
 
         canvas.setBounds(0, 0, panel.getWidth(), panel.getHeight());
         panel.add(canvas);
+    }
+
+    public void setTreeType(int type) {
+        this.type = type;
+
+        this.redBlackTree = null;
+        this.tree = null;
+
+        switch (type) {
+            case BALANCED_BINARY_TREE:
+                break;
+            case COMPLETE_BINARY_TREE:
+                break;
+            case DEGENERATE_BINARY_TREE:
+                break;
+            case PERFECT_BINARY_TREE:
+                break;
+            case ROOTED_BINARY_TREE:
+                this.tree = new RootedBinaryTree<>();
+                break;
+            case RED_BLACK_TREE:
+                this.redBlackTree = new RedBlackTree<>();
+                break;
+        }
     }
 
     public DefaultListModel<String> getList() {
@@ -56,7 +100,13 @@ public class Controller {
             return;
         }
         int value = Integer.parseInt(input);
-        redBlackTree.insert(value);
+
+        if (redBlackTree == null) {
+            tree.insert(value);
+        } else {
+            redBlackTree.insert(value);
+        }
+
         list.addElement(input);
 
         print();
@@ -96,7 +146,11 @@ public class Controller {
                 random = r.nextInt(1000);
             }
             list.addElement(String.valueOf(random));
-            redBlackTree.insert(random);
+            if (redBlackTree == null) {
+                tree.insert(random);
+            } else {
+                redBlackTree.insert(random);
+            }
         }
 
         print();
@@ -133,11 +187,12 @@ public class Controller {
 
     private void print() {
         long start = System.currentTimeMillis();
-        ImageRedBlackTree<Integer> irbt = new ImageRedBlackTree<Integer>(redBlackTree, 16 ,16);
+        TreeImage treeImage = redBlackTree == null ? 
+                new ImageTree<>(tree, 16, 16) :
+                new ImageRedBlackTree<>(redBlackTree, 16, 16);
         long stop = System.currentTimeMillis();
         System.out.println("Create image: " + (stop - start) + " ms");
-        Image image = new Image(irbt);
-        this.image = image.create();
+        this.image = new Image(treeImage).create();
 
         canvas.setImage(this.image);
         canvas.repaint();

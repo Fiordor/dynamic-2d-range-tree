@@ -74,12 +74,48 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
 
     @Override
     public ImageLine[] getLines() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<ImageLine> dynamicLines = new ArrayList<>();
+
+        for (int i = 0; i < nodeMatrix.length; i++) {
+            for (int j = 0; j < nodeMatrix[i].length; j++) {
+                ImageNode node = nodeMatrix[i][j];
+                ImageNode parent = node.parent;
+                if (parent != null) {
+                    int x1 = parent.x + (parent.w / 2);
+                    int y1 = parent.y - (parent.h / 2);
+                    int x2 = node.x + (node.w / 2);
+                    int y2 = node.y - (node.h / 2);
+
+                    dynamicLines.add(new ImageLine(x1, y1, x2, y2));
+                }
+            }
+        }
+
+        ImageLine[] lines = new ImageLine[dynamicLines.size()];
+        for (int i = 0; i < lines.length; i++) {
+            lines[i] = dynamicLines.get(i);
+        }
+
+        return lines;
     }
 
     @Override
     public ImageLabel[] getLabels() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<ImageLabel> dynamicLabels = new ArrayList<>();
+
+        for (int i = 0; i < nodeMatrix.length; i++) {
+            for (int j = 0; j < nodeMatrix[i].length; j++) {
+                ImageNode node = nodeMatrix[i][j];
+                dynamicLabels.add(new ImageLabel(node.value, node.x, node.y, node.w, node.h, node.c));
+            }
+        }
+
+        ImageLabel[] labels = new ImageLabel[dynamicLabels.size()];
+        for (int i = 0; i < labels.length; i++) {
+            labels[i] = dynamicLabels.get(i);
+        }
+
+        return labels;
     }
 
     @Override
