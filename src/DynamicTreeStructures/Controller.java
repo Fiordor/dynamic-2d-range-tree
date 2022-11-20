@@ -192,7 +192,12 @@ public class Controller {
                 new ImageRedBlackTree<>(redBlackTree, 16, 16);
         long stop = System.currentTimeMillis();
         System.out.println("Create image: " + (stop - start) + " ms");
+        
+        start = System.currentTimeMillis();
         this.image = new Image(treeImage).create();
+        stop = System.currentTimeMillis();
+        
+        System.out.println("print image: " + (stop - start) + " ms");
 
         canvas.setImage(this.image);
         canvas.repaint();

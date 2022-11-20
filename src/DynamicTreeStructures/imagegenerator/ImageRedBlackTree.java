@@ -15,6 +15,7 @@ import java.util.ArrayList;
 /**
  *
  * @author Fiordor
+ * @param <K>
  */
 public class ImageRedBlackTree<K extends Comparable<K>> implements TreeImage {
 

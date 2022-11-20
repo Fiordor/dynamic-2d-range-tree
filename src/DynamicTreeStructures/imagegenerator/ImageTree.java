@@ -19,6 +19,7 @@ import java.util.List;
 /**
  *
  * @author Fiordor
+ * @param <K>
  */
 public class ImageTree<K extends Comparable<K>> implements TreeImage {
 
@@ -27,6 +28,8 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
     private int height;
 
     private Font font;
+    private int maxLabelWidth;
+    private int maxLabelHeight;
 
     private BufferedImage calcBoundsImg;
     private Graphics2D calcBoundsG2D;
@@ -43,6 +46,8 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
     public ImageTree(TreeStructure<K> tree, int gapWidth, int gapHeight, Font font) {
 
         this.font = font;
+        this.maxLabelWidth = 0;
+        this.maxLabelHeight = 0;
 
         this.calcBoundsImg = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
         this.calcBoundsG2D = this.calcBoundsImg.createGraphics();
@@ -51,17 +56,20 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
         List< List<ImageNode>> rawMatrix = new ArrayList<>();
 
         if (tree != null) {
+            long start = System.currentTimeMillis();
             next(null, tree.getRoot(), 0, rawMatrix);
+            long fin = System.currentTimeMillis();
+            //System.out.println("next: " + (fin - start) + " ms");
+            this.nodeMatrix = toNodeMatrix(rawMatrix);
+            start = System.currentTimeMillis();
 
-            nodeMatrix = new ImageNode[rawMatrix.size()][];
-            for (int i = 0; i < nodeMatrix.length; i++) {
-                nodeMatrix[i] = new ImageNode[rawMatrix.get(i).size()];
-                for (int j = 0; j < nodeMatrix[i].length; j++) {
-                    nodeMatrix[i][j] = rawMatrix.get(i).get(j);
-                }
-            }
+            fin = System.currentTimeMillis();
+            //System.out.println("matrix: " + (fin - start) + " ms");
 
+            start = System.currentTimeMillis();
             assign(gapWidth, gapHeight);
+            fin = System.currentTimeMillis();
+            //System.out.println("assign: " + (fin - start) + " ms");
         } else {
             nodeMatrix = null;
         }
@@ -138,33 +146,14 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
      * @param gapWidth espacio entre los datos de una misma fila.
      * @param gapHeight espacio entre la columnas.
      */
-    private void assign(int gapWidth, int gapHeight) {
+    protected void assign(int gapWidth, int gapHeight) {
 
         width = 0;
         height = 0;
 
-        int maxLabelHeight = 0;
-        int maxLabelWidth = 0;
-
-        for (int i = 0; i < nodeMatrix.length; i++) {
-            for (int j = 0; j < nodeMatrix[i].length; j++) {
-                ImageNode node = nodeMatrix[i][j];
-
-                int[] bounds = stringBounds(node.value);
-                node.w = bounds[0];
-                node.h = bounds[1];
-
-                if (node.w > maxLabelWidth) {
-                    maxLabelWidth = node.w;
-                }
-                if (node.h > maxLabelHeight) {
-                    maxLabelHeight = node.h;
-                }
-            }
-        }
-
         int nodesCant = (int) Math.pow(2, nodeMatrix.length - 1);
         width = (nodesCant * maxLabelWidth) + ((nodesCant * gapWidth) - gapWidth);
+        
         int top = maxLabelHeight;
         nodeMatrix[0][0].x = (width / 2) - (nodeMatrix[0][0].w / 2);
         nodeMatrix[0][0].y = top;
@@ -201,17 +190,14 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
     }
 
     /**
-     * Añade elementos a un array bidimensional dinámico. Si la fila no existe,
-     * se crea. Se añade el nodo al array y si no es la raíz se le pone al nodo
-     * la referencia de su padre. Luego se continua con los nodos hijos del
-     * nodo.
+     * Write!
      *
      * @param parent nodo padre parseado al ImageNode || null para el nodo root.
      * @param child nodo que se inserta en el array bidimensional.
      * @param deep profundidad del árbol.
      * @param matrix array bidimensional donde se añaden los nuevos nodos.
      */
-    private void next(ImageNode parent, Node<K> child, int deep, List<List<ImageNode>> matrix) {
+    protected void next(ImageNode parent, Node<K> child, int deep, List<List<ImageNode>> matrix) {
 
         if (deep >= matrix.size()) {
             matrix.add(new ArrayList<>());
@@ -239,17 +225,41 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
      * @param text label to print into the image
      * @return int[2] where 0 is width and 1 is height
      */
-    private int[] stringBounds(String text) {
+    protected int[] stringBounds(String text) {
 
         Rectangle2D bounds = this.calcBoundsFontMetrics.getStringBounds(text, this.calcBoundsG2D);
         double rawWidth = bounds.getWidth();
         double rawHeight = bounds.getHeight();
+
+        //System.out.println(rawHeight + " " + calcBoundsFontMetrics.getHeight());
         int w = rawWidth % 1 == 0 ? (int) rawWidth : (int) rawWidth + 1;
         int h = rawHeight % 1 == 0 ? (int) rawHeight : (int) rawHeight + 1;
         return new int[]{w, h};
     }
 
-    private ImageNode parse(Node<K> node) {
-        return new ImageNode(node.getData().toString());
+    protected ImageNode parse(Node<K> node) {
+        ImageNode imageNode = new ImageNode(node.getData().toString());
+        int[] bounds = stringBounds(imageNode.value);
+        imageNode.w = bounds[0];
+        imageNode.h = bounds[1];
+
+        if (imageNode.w > maxLabelWidth) {
+            maxLabelWidth = imageNode.w;
+        }
+        if (imageNode.h > maxLabelHeight) {
+            maxLabelHeight = imageNode.h;
+        }
+        return imageNode;
+    }
+
+    protected ImageNode[][] toNodeMatrix(List< List<ImageNode>> rawMatrix) {
+        ImageNode[][] m = new ImageNode[rawMatrix.size()][];
+        for (int i = 0; i < m.length; i++) {
+            m[i] = new ImageNode[rawMatrix.get(i).size()];
+            for (int j = 0; j < m[i].length; j++) {
+                m[i][j] = rawMatrix.get(i).get(j);
+            }
+        }
+        return m;
     }
 }

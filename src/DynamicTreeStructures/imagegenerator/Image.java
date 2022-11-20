@@ -13,6 +13,8 @@ import java.awt.image.BufferedImage;
  */
 public class Image {
 
+    private final Color BACKGROUND = new Color(200, 200, 200);
+
     private Font font;
     private ImageLabel[] labels;
     private ImageLine[] lines;
@@ -43,43 +45,79 @@ public class Image {
 
     public BufferedImage create(int width, int height, int margin) {
 
-        int fullWidth = width + margin * 2;
-        int fullHeight = height + margin * 2;
-
-        BufferedImage bufferedImage = new BufferedImage(fullWidth, fullHeight, BufferedImage.TYPE_INT_RGB);
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = bufferedImage.createGraphics();
         g2d.setFont(font);
-        g2d.setColor(new Color(200, 200, 200));
-        g2d.fillRect(0, 0, fullWidth, fullHeight);
+        g2d.setColor(BACKGROUND);
+        g2d.fillRect(0, 0, width, height);
         g2d.setColor(Color.BLACK);
 
         for (int i = 0; i < lines.length; i++) {
-            drawLine(lines[i], margin, g2d);
+            drawLine(lines[i], g2d);
         }
 
         for (int i = 0; i < labels.length; i++) {
-            drawString(labels[i], margin, g2d);
+            drawString(labels[i], g2d);
         }
 
+        g2d.setColor(Color.red);
+        int[] bounds = cutImage(bufferedImage);
+        if (bounds != null) {
+            g2d.fillRect(0, 0, bounds[0], height);
+            g2d.fillRect(bounds[1], 0, width - bounds[1], height);
+        }
+
+        /*
+        g2d.fillRect(0, 0, fullWidth, margin);
+        g2d.fillRect(0, fullHeight - margin, fullWidth, margin);
+        g2d.fillRect(0, 0, margin, fullHeight);
+        g2d.fillRect(fullWidth - margin, 0, margin, fullHeight);
+         */
         return bufferedImage;
     }
 
-    private void drawLine(ImageLine line, int margin, Graphics2D g2d) {
+    private int[] cutImage(BufferedImage base) {
+
+        int left = -1;
+        int right = -1;
+
+        int middle = base.getWidth() / 2;
+        int iLeft = 0, iRight = base.getWidth() - 1;
+        while (iLeft < middle) {
+            for (int j = 0; j < base.getHeight(); j++) {
+                if (left == -1 && base.getRGB(iLeft, j) != BACKGROUND.getRGB()) {
+                    left = iLeft;
+                    System.out.println("left " + left);
+                }
+
+                if (right == -1 && base.getRGB(iRight, j) != BACKGROUND.getRGB()) {
+                    right = iRight + 1;
+                    System.out.println("right " + right);
+                }
+
+                if (left > 0 && right > 0) {
+                    return new int[]{left, right};
+                }
+            }
+            iLeft++;
+            iRight--;
+        }
+
+        return null;
+    }
+
+    private void drawLine(ImageLine line, Graphics2D g2d) {
         if (lastColor != line.getC()) {
             lastColor = line.getC();
             g2d.setColor(lastColor);
         }
-        g2d.drawLine(
-                line.getX1() + margin,
-                line.getY1() + margin,
-                line.getX2() + margin,
-                line.getY2() + margin);
+        g2d.drawLine(line.getX1(),line.getY1(),line.getX2(),line.getY2());
     }
 
-    private void drawString(ImageLabel label, int margin, Graphics2D g2d) {
+    private void drawString(ImageLabel label, Graphics2D g2d) {
 
-        int lbX = label.getX() + margin;
-        int lbY = label.getY() + margin;
+        int lbX = label.getX();
+        int lbY = label.getY();
         int bgX = lbX;
         int bgY = lbY - label.getH();
 
