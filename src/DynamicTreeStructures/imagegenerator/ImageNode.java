@@ -9,14 +9,18 @@ import java.awt.Color;
 public class ImageNode {
 
     public String value;
+    
     public int x;
     public int y;
+    
     public int w;
     public int h;
 
     public Color c;
 
     public ImageNode parent;
+    public String left;
+    public String right;
 
     public ImageNode() {
         this(null, Color.BLACK);
@@ -34,5 +38,7 @@ public class ImageNode {
         this.h = 0;
         this.c = c;
         this.parent = null;
+        this.left = null;
+        this.right = null;
     }
 }

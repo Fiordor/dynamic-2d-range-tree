@@ -55,6 +55,6 @@ public class Node<K extends Comparable<K>> implements Comparable<Node<K>> {
         String l = left == null ? "null" : left.data.toString();
         String d = data.toString();
         String r = right == null ? "null" : right.data.toString();
-        return String.format("[%s,%s,%s]", l, d, r);
+        return String.format("%s;%s;%s", l, d, r);
     }
 }

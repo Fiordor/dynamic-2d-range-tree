@@ -101,13 +101,15 @@ public class Controller {
         }
         int value = Integer.parseInt(input);
 
+        long start = System.nanoTime();
         if (redBlackTree == null) {
             tree.insert(value);
         } else {
             redBlackTree.insert(value);
         }
+        long fin = System.nanoTime();
 
-        list.addElement(input);
+        list.addElement(String.format("%d. %s (%d ns)", list.getSize(), input, (fin - start)));
 
         print();
     }
@@ -115,10 +117,10 @@ public class Controller {
     public void clear() {
         this.canvas.clear();
         this.canvas.repaint();
-
-        this.redBlackTree = new RedBlackTree<>();
         this.list.clear();
         this.zoom = 1.0;
+
+        this.setTreeType(type);
     }
 
     public void search(String input) {
@@ -145,12 +147,16 @@ public class Controller {
             while (list.contains(String.valueOf(random))) {
                 random = r.nextInt(1000);
             }
-            list.addElement(String.valueOf(random));
+
+            long start = System.nanoTime();
             if (redBlackTree == null) {
                 tree.insert(random);
             } else {
                 redBlackTree.insert(random);
             }
+            long fin = System.nanoTime();
+
+            list.addElement(String.format("%d. %d (%d ns)", list.getSize(), random, (fin - start)));
         }
 
         print();
@@ -186,20 +192,44 @@ public class Controller {
     }
 
     private void print() {
-        long start = System.currentTimeMillis();
-        TreeImage treeImage = redBlackTree == null ? 
-                new ImageTree<>(tree, 16, 16) :
-                new ImageRedBlackTree<>(redBlackTree, 16, 16);
-        long stop = System.currentTimeMillis();
-        System.out.println("Create image: " + (stop - start) + " ms");
-        
-        start = System.currentTimeMillis();
-        this.image = new Image(treeImage).create();
-        stop = System.currentTimeMillis();
-        
-        System.out.println("print image: " + (stop - start) + " ms");
 
+        /*
+        System.out.println(redBlackTree == null
+                ? tree.toString()
+                : redBlackTree.toString());
+         */
+        long start = System.currentTimeMillis();
+        TreeImage treeImage = redBlackTree == null
+                ? new ImageTree<>(tree, 16, 16)
+                : new ImageRedBlackTree<>(redBlackTree, 16, 16);
+        long stop = System.currentTimeMillis();
+        //System.out.println("Create image: " + (stop - start) + " ms");
+
+        start = System.currentTimeMillis();
+        this.image = new Image(treeImage, typeToString()).create();
+        stop = System.currentTimeMillis();
+
+        //System.out.println("print image: " + (stop - start) + " ms");
         canvas.setImage(this.image);
         canvas.repaint();
+    }
+
+    private String typeToString() {
+        switch (type) {
+            case BALANCED_BINARY_TREE:
+                return "Balanced binary tree";
+            case COMPLETE_BINARY_TREE:
+                return "Completed binary tree";
+            case DEGENERATE_BINARY_TREE:
+                return "Degenerate binary tree";
+            case PERFECT_BINARY_TREE:
+                return "Perfect binary tree";
+            case ROOTED_BINARY_TREE:
+                return "Rooted binary tree";
+            case RED_BLACK_TREE:
+                return "Red black tree";
+            default:
+                return null;
+        }
     }
 }

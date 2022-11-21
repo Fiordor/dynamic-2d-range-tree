@@ -7,7 +7,6 @@ package DynamicTreeStructures.imagegenerator;
 import DynamicTreeStructures.interfaces.TreeImage;
 import DynamicTreeStructures.interfaces.TreeStructure;
 import DynamicTreeStructures.structure.Node;
-import DynamicTreeStructures.structure.RedBlackTree;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -56,20 +55,9 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
         List< List<ImageNode>> rawMatrix = new ArrayList<>();
 
         if (tree != null) {
-            long start = System.currentTimeMillis();
             next(null, tree.getRoot(), 0, rawMatrix);
-            long fin = System.currentTimeMillis();
-            //System.out.println("next: " + (fin - start) + " ms");
             this.nodeMatrix = toNodeMatrix(rawMatrix);
-            start = System.currentTimeMillis();
-
-            fin = System.currentTimeMillis();
-            //System.out.println("matrix: " + (fin - start) + " ms");
-
-            start = System.currentTimeMillis();
             assign(gapWidth, gapHeight);
-            fin = System.currentTimeMillis();
-            //System.out.println("assign: " + (fin - start) + " ms");
         } else {
             nodeMatrix = null;
         }
@@ -153,11 +141,14 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
 
         int nodesCant = (int) Math.pow(2, nodeMatrix.length - 1);
         width = (nodesCant * maxLabelWidth) + ((nodesCant * gapWidth) - gapWidth);
-        
+
         int top = maxLabelHeight;
         nodeMatrix[0][0].x = (width / 2) - (nodeMatrix[0][0].w / 2);
         nodeMatrix[0][0].y = top;
         top += gapHeight;
+
+        int xLeft = nodeMatrix[0][0].x;
+        int xRight = xLeft + nodeMatrix[0][0].w;
 
         for (int i = 1; i < nodeMatrix.length; i++) {
 
@@ -168,8 +159,8 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
             for (int j = 0; j < nodeMatrix[i].length; j++) {
                 ImageNode node = nodeMatrix[i][j];
 
-                boolean right = node.value.compareTo(node.parent.value) > 0;
-                int parentX = node.parent.x;
+                boolean right = node.value.equals(node.parent.right);
+                int parentX = node.parent.x + (node.parent.w / 2);
 
                 while (left + cellWidth < parentX) {
                     left += cellWidth;
@@ -181,12 +172,24 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
                 node.x = left + (cellWidth / 2) - (node.w / 2);
                 node.y = top;
 
+                if (node.x < xLeft) {
+                    xLeft = node.x;
+                }
+                if (xRight < node.x + node.w) {
+                    xRight = node.x + node.w;
+                }
             }
             top += gapHeight;
         }
         top -= gapHeight;
-
         height = top;
+
+        width = xRight - xLeft;
+        for (int i = 0; i < nodeMatrix.length; i++) {
+            for (int j = 0; j < nodeMatrix[i].length; j++) {
+                nodeMatrix[i][j].x = nodeMatrix[i][j].x - xLeft;
+            }
+        }
     }
 
     /**
@@ -248,6 +251,14 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
         }
         if (imageNode.h > maxLabelHeight) {
             maxLabelHeight = imageNode.h;
+        }
+        
+        if (node.getLeft() != null) {
+            imageNode.left = node.getLeft().getData().toString();
+        }
+        
+        if (node.getRight()!= null) {
+            imageNode.right = node.getRight().getData().toString();
         }
         return imageNode;
     }

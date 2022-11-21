@@ -4,7 +4,9 @@ import DynamicTreeStructures.interfaces.TreeImage;
 import DynamicTreeStructures.structure.RedBlackTree;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 /**
@@ -15,6 +17,8 @@ public class Image {
 
     private final Color BACKGROUND = new Color(200, 200, 200);
 
+    private String type;
+
     private Font font;
     private ImageLabel[] labels;
     private ImageLine[] lines;
@@ -24,7 +28,10 @@ public class Image {
 
     private Color lastColor;
 
-    public Image(TreeImage treeImage) {
+    public Image(TreeImage treeImage, String type) {
+
+        this.type = type;
+
         font = treeImage.getFont();
         labels = treeImage.getLabels();
         lines = treeImage.getLines();
@@ -39,85 +46,79 @@ public class Image {
         return this.create(minWidth, minHeight, 16);
     }
 
+    public BufferedImage create(int margin) {
+        return this.create(minWidth, minHeight, margin);
+    }
+
     public BufferedImage create(int width, int height) {
         return this.create(width, height, 16);
     }
 
     public BufferedImage create(int width, int height, int margin) {
 
-        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        int[] stringBounds = stringBounds(type);
+        int bufferedImageWidth = minWidth + (margin * 2);
+        int bufferedImageHeight = minHeight + (margin * 2) + stringBounds[1] + 16;
+
+        int marginX = margin;
+        int marginY = 16 + stringBounds[1] + margin;
+
+        if (width > bufferedImageWidth) {
+            marginX = (width - bufferedImageWidth) / 2;
+            bufferedImageWidth = width;
+        }
+
+        if (stringBounds[0] > bufferedImageWidth) {
+            marginX = (stringBounds[0] - bufferedImageWidth) / 2;
+            bufferedImageWidth = stringBounds[0];
+        }
+
+        if (height > bufferedImageHeight) {
+            marginY = height - bufferedImageHeight;
+            bufferedImageHeight = height;
+        }
+        
+        System.out.println(stringBounds[0]);
+        System.out.println(minWidth);
+        System.out.println(bufferedImageWidth);
+        System.out.println(marginX);
+
+        BufferedImage bufferedImage = new BufferedImage(bufferedImageWidth, bufferedImageHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = bufferedImage.createGraphics();
         g2d.setFont(font);
         g2d.setColor(BACKGROUND);
-        g2d.fillRect(0, 0, width, height);
+        g2d.fillRect(0, 0, bufferedImageWidth, bufferedImageHeight);
         g2d.setColor(Color.BLACK);
 
+        g2d.drawString(type, bufferedImageWidth / 2 - stringBounds[0] / 2, margin + stringBounds[1]);
+
         for (int i = 0; i < lines.length; i++) {
-            drawLine(lines[i], g2d);
+            drawLine(lines[i], marginX, marginY, g2d);
         }
 
         for (int i = 0; i < labels.length; i++) {
-            drawString(labels[i], g2d);
+            drawString(labels[i], marginX, marginY, g2d);
         }
 
-        g2d.setColor(Color.red);
-        int[] bounds = cutImage(bufferedImage);
-        if (bounds != null) {
-            g2d.fillRect(0, 0, bounds[0], height);
-            g2d.fillRect(bounds[1], 0, width - bounds[1], height);
-        }
-
-        /*
-        g2d.fillRect(0, 0, fullWidth, margin);
-        g2d.fillRect(0, fullHeight - margin, fullWidth, margin);
-        g2d.fillRect(0, 0, margin, fullHeight);
-        g2d.fillRect(fullWidth - margin, 0, margin, fullHeight);
-         */
         return bufferedImage;
     }
 
-    private int[] cutImage(BufferedImage base) {
-
-        int left = -1;
-        int right = -1;
-
-        int middle = base.getWidth() / 2;
-        int iLeft = 0, iRight = base.getWidth() - 1;
-        while (iLeft < middle) {
-            for (int j = 0; j < base.getHeight(); j++) {
-                if (left == -1 && base.getRGB(iLeft, j) != BACKGROUND.getRGB()) {
-                    left = iLeft;
-                    System.out.println("left " + left);
-                }
-
-                if (right == -1 && base.getRGB(iRight, j) != BACKGROUND.getRGB()) {
-                    right = iRight + 1;
-                    System.out.println("right " + right);
-                }
-
-                if (left > 0 && right > 0) {
-                    return new int[]{left, right};
-                }
-            }
-            iLeft++;
-            iRight--;
-        }
-
-        return null;
-    }
-
-    private void drawLine(ImageLine line, Graphics2D g2d) {
+    private void drawLine(ImageLine line, int marginX, int marginY, Graphics2D g2d) {
         if (lastColor != line.getC()) {
             lastColor = line.getC();
             g2d.setColor(lastColor);
         }
-        g2d.drawLine(line.getX1(),line.getY1(),line.getX2(),line.getY2());
+        g2d.drawLine(
+                line.getX1() + marginX,
+                line.getY1() + marginY,
+                line.getX2() + marginX,
+                line.getY2() + marginY);
     }
 
-    private void drawString(ImageLabel label, Graphics2D g2d) {
+    private void drawString(ImageLabel label, int marginX, int marginY, Graphics2D g2d) {
 
-        int lbX = label.getX();
-        int lbY = label.getY();
+        int lbX = label.getX() + marginX;
+        int lbY = label.getY() + marginY;
         int bgX = lbX;
         int bgY = lbY - label.getH();
 
@@ -129,5 +130,21 @@ public class Image {
         }
         g2d.setColor(lastColor);
         g2d.drawString(label.getLabel(), lbX, lbY);
+    }
+
+    private int[] stringBounds(String text) {
+
+        BufferedImage calcBoundsImg = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+        Graphics2D calcBoundsG2D = calcBoundsImg.createGraphics();
+        FontMetrics calcBoundsFontMetrics = calcBoundsG2D.getFontMetrics(this.font);
+
+        Rectangle2D bounds = calcBoundsFontMetrics.getStringBounds(text, calcBoundsG2D);
+        double rawWidth = bounds.getWidth();
+        double rawHeight = bounds.getHeight();
+
+        int width = rawWidth % 1 == 0 ? (int) rawWidth : (int) rawWidth + 1;
+        int height = rawHeight % 1 == 0 ? (int) rawHeight : (int) rawHeight + 1;
+
+        return new int[]{width, height};
     }
 }

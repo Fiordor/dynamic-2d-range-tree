@@ -47,6 +47,19 @@ public class RootedBinaryTree<K extends Comparable<K>> implements TreeStructure<
         return null;
     }
 
+    @Override
+    public String toString() {
+
+        if (root == null) {
+            return null;
+        } else {
+            StringBuilder builder = new StringBuilder();
+            builder.append(root.toString());
+            toStringNext(root, builder);
+            return builder.toString();
+        }
+    }
+
     private void insertNext(Node<K> node, K data) {
 
         if (data.compareTo(node.getData()) < 0) {
@@ -63,6 +76,19 @@ public class RootedBinaryTree<K extends Comparable<K>> implements TreeStructure<
             } else {
                 insertNext(node.getRight(), data);
             }
+        }
+    }
+
+    private void toStringNext(Node<K> node, StringBuilder builder) {
+
+        if (node.getLeft() != null) {
+            builder.append('|').append(node.getLeft().toString());
+            toStringNext(node.getLeft(), builder);
+        }
+
+        if (node.getRight() != null) {
+            builder.append('|').append(node.getRight().toString());
+            toStringNext(node.getRight(), builder);
         }
     }
 }

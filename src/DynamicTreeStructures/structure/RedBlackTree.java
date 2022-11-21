@@ -1,4 +1,3 @@
-
 package DynamicTreeStructures.structure;
 
 import DynamicTreeStructures.interfaces.TreeStructure;
@@ -7,7 +6,7 @@ import DynamicTreeStructures.interfaces.TreeStructure;
  *
  * @author Fiordor
  */
-public class RedBlackTree<K extends Comparable<K>>{
+public class RedBlackTree<K extends Comparable<K>> {
 
     private RedBlackTreeNode<K> root;
 
@@ -44,7 +43,8 @@ public class RedBlackTree<K extends Comparable<K>>{
 
     /**
      * Not implemented already
-     * @return 
+     *
+     * @return
      */
     public K delete(K k) {
         return null;
@@ -70,6 +70,11 @@ public class RedBlackTree<K extends Comparable<K>>{
                 node = node.getLeft();
             }
         }
+        return null;
+    }
+
+    @Override
+    public String toString() {
         return null;
     }
 
@@ -229,10 +234,5 @@ public class RedBlackTree<K extends Comparable<K>>{
         oldRoot.setRight(newRoot.getLeft());
         newRoot.setLeft(oldRoot);
         return newRoot;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
     }
 }
