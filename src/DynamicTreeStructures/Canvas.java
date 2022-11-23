@@ -26,7 +26,7 @@ public class Canvas extends JPanel {
         setImage(bufferedImage);
     }
 
-    public void clear() {
+    public void clearImage() {
         bufferedImage = null;
         this.x = 0;
         this.y = 0;

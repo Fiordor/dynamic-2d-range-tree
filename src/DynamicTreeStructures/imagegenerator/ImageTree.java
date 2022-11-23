@@ -3,6 +3,9 @@ package DynamicTreeStructures.imagegenerator;
 import DynamicTreeStructures.interfaces.TreeImage;
 import DynamicTreeStructures.interfaces.TreeStructure;
 import DynamicTreeStructures.structure.Node;
+import DynamicTreeStructures.structure.NodeRedBlackTree;
+import DynamicTreeStructures.structure.RedBlackTree;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -10,7 +13,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  *
@@ -35,23 +37,36 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
         this(tree, 4, 16, new Font(Font.MONOSPACED, Font.PLAIN, 16));
     }
 
+    public ImageTree(RedBlackTree<K> tree) {
+        this(tree, 4, 16, new Font(Font.MONOSPACED, Font.PLAIN, 16));
+    }
+
     public ImageTree(TreeStructure<K> tree, int gapWidth, int gapHeight) {
         this(tree, gapWidth, gapHeight, new Font(Font.MONOSPACED, Font.PLAIN, 16));
     }
 
+    public ImageTree(RedBlackTree<K> tree, int gapWidth, int gapHeight) {
+        this(tree, gapWidth, gapHeight, new Font(Font.MONOSPACED, Font.PLAIN, 16));
+    }
+
     public ImageTree(TreeStructure<K> tree, int gapWidth, int gapHeight, Font font) {
-        
-        this.font = font;
-        this.maxLabelWidth = 0;
-        this.maxLabelHeight = 0;
-
-        this.calcBoundsImg = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-        this.calcBoundsG2D = this.calcBoundsImg.createGraphics();
-        this.calcBoundsFontMetrics = this.calcBoundsG2D.getFontMetrics(this.font);
-
-        List< List<ImageNode>> rawMatrix = new ArrayList<>();
+        init(font);
 
         if (tree != null) {
+            List< List<ImageNode>> rawMatrix = new ArrayList<>();
+            next(null, tree.getRoot(), 0, rawMatrix);
+            this.nodeMatrix = toNodeMatrix(rawMatrix);
+            assign(gapWidth, gapHeight);
+        } else {
+            nodeMatrix = null;
+        }
+    }
+
+    public ImageTree(RedBlackTree<K> tree, int gapWidth, int gapHeight, Font font) {
+        init(font);
+
+        if (tree != null) {
+            List< List<ImageNode>> rawMatrix = new ArrayList<>();
             next(null, tree.getRoot(), 0, rawMatrix);
             this.nodeMatrix = toNodeMatrix(rawMatrix);
             assign(gapWidth, gapHeight);
@@ -131,7 +146,7 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
      * @param gapWidth espacio entre los datos de una misma fila.
      * @param gapHeight espacio entre la columnas.
      */
-    protected void assign(int gapWidth, int gapHeight) {
+    private void assign(int gapWidth, int gapHeight) {
 
         width = 0;
         height = 0;
@@ -189,6 +204,16 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
         }
     }
 
+    private void init(Font font) {
+        this.font = font;
+        this.maxLabelWidth = 0;
+        this.maxLabelHeight = 0;
+
+        this.calcBoundsImg = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+        this.calcBoundsG2D = this.calcBoundsImg.createGraphics();
+        this.calcBoundsFontMetrics = this.calcBoundsG2D.getFontMetrics(this.font);
+    }
+
     /**
      * Write!
      *
@@ -197,7 +222,29 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
      * @param deep profundidad del árbol.
      * @param matrix array bidimensional donde se añaden los nuevos nodos.
      */
-    protected void next(ImageNode parent, Node<K> child, int deep, List<List<ImageNode>> matrix) {
+    private void next(ImageNode parent, Node<K> child, int deep, List<List<ImageNode>> matrix) {
+
+        if (deep >= matrix.size()) {
+            matrix.add(new ArrayList<>());
+        }
+
+        ImageNode node = parse(child);
+        matrix.get(deep).add(node);
+
+        if (parent != null) {
+            node.parent = parent;
+        }
+
+        if (child.getLeft() != null) {
+            next(node, child.getLeft(), deep + 1, matrix);
+        }
+
+        if (child.getRight() != null) {
+            next(node, child.getRight(), deep + 1, matrix);
+        }
+    }
+
+    private void next(ImageNode parent, NodeRedBlackTree<K> child, int deep, List<List<ImageNode>> matrix) {
 
         if (deep >= matrix.size()) {
             matrix.add(new ArrayList<>());
@@ -225,7 +272,7 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
      * @param text label to print into the image
      * @return int[2] where 0 is width and 1 is height
      */
-    protected int[] stringBounds(String text) {
+    private int[] stringBounds(String text) {
 
         Rectangle2D bounds = this.calcBoundsFontMetrics.getStringBounds(text, this.calcBoundsG2D);
         double rawWidth = bounds.getWidth();
@@ -236,8 +283,31 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
         return new int[]{w, h};
     }
 
-    protected ImageNode parse(Node<K> node) {
+    private ImageNode parse(Node<K> node) {
         ImageNode imageNode = new ImageNode(node.getData().toString());
+        if (node.getLeft() != null) {
+            imageNode.left = node.getLeft().getData().toString();
+        }
+
+        if (node.getRight() != null) {
+            imageNode.right = node.getRight().getData().toString();
+        }
+        return parse(imageNode);
+    }
+
+    private ImageNode parse(NodeRedBlackTree<K> node) {
+        ImageNode imageNode = new ImageNode(node.getData().toString(), node.isRed() ? Color.RED : Color.BLACK);
+        if (node.getLeft() != null) {
+            imageNode.left = node.getLeft().getData().toString();
+        }
+
+        if (node.getRight() != null) {
+            imageNode.right = node.getRight().getData().toString();
+        }
+        return parse(imageNode);
+    }
+
+    private ImageNode parse(ImageNode imageNode) {
         int[] bounds = stringBounds(imageNode.value);
         imageNode.w = bounds[0];
         imageNode.h = bounds[1];
@@ -248,18 +318,10 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
         if (imageNode.h > maxLabelHeight) {
             maxLabelHeight = imageNode.h;
         }
-        
-        if (node.getLeft() != null) {
-            imageNode.left = node.getLeft().getData().toString();
-        }
-        
-        if (node.getRight()!= null) {
-            imageNode.right = node.getRight().getData().toString();
-        }
         return imageNode;
     }
 
-    protected ImageNode[][] toNodeMatrix(List< List<ImageNode>> rawMatrix) {
+    private ImageNode[][] toNodeMatrix(List< List<ImageNode>> rawMatrix) {
         ImageNode[][] m = new ImageNode[rawMatrix.size()][];
         for (int i = 0; i < m.length; i++) {
             m[i] = new ImageNode[rawMatrix.get(i).size()];

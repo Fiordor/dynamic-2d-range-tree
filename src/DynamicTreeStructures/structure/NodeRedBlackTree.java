@@ -4,6 +4,7 @@ package DynamicTreeStructures.structure;
 /**
  *
  * @author Fiordor
+ * @param <K>
  */
 public class NodeRedBlackTree<K extends Comparable<K>> implements Comparable<NodeRedBlackTree<K>> {
 

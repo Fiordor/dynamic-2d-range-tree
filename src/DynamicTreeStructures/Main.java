@@ -62,7 +62,7 @@ public class Main extends javax.swing.JFrame {
         miSearch = new javax.swing.JMenuItem();
         miDelete = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
-        cbmBalancedBinary = new javax.swing.JCheckBoxMenuItem();
+        cbmAVLTree = new javax.swing.JCheckBoxMenuItem();
         cbmCompleteBinary = new javax.swing.JCheckBoxMenuItem();
         cbmDegeneratedBinary = new javax.swing.JCheckBoxMenuItem();
         cbmPerfectBinary = new javax.swing.JCheckBoxMenuItem();
@@ -250,13 +250,13 @@ public class Main extends javax.swing.JFrame {
 
         jMenu2.setText("Structure");
 
-        cbmBalancedBinary.setText("Balanced binary tree");
-        cbmBalancedBinary.addActionListener(new java.awt.event.ActionListener() {
+        cbmAVLTree.setText("AVL tree");
+        cbmAVLTree.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbmMenu(evt);
             }
         });
-        jMenu2.add(cbmBalancedBinary);
+        jMenu2.add(cbmAVLTree);
 
         cbmCompleteBinary.setText("Complete binary tree");
         cbmCompleteBinary.addActionListener(new java.awt.event.ActionListener() {
@@ -392,7 +392,7 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_miExitActionPerformed
 
     private void miClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miClearActionPerformed
-        controller.clear();
+        controller.clearData();
     }//GEN-LAST:event_miClearActionPerformed
 
     private void miSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSearchActionPerformed
@@ -419,15 +419,15 @@ public class Main extends javax.swing.JFrame {
 
     private void cbmMenu(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbmMenu
         
-        cbmBalancedBinary.setSelected(false);
+        cbmAVLTree.setSelected(false);
         cbmCompleteBinary.setSelected(false);
         cbmDegeneratedBinary.setSelected(false);
         cbmPerfectBinary.setSelected(false);
         cbmRootedBinary.setSelected(false);
         cbmRedblack.setSelected(false);
         
-        if (evt.getSource() == cbmBalancedBinary) {
-            cbmBalancedBinary.setSelected(true);
+        if (evt.getSource() == cbmAVLTree) {
+            cbmAVLTree.setSelected(true);
             controller.setTreeType(Controller.BALANCED_BINARY_TREE);
         } else if (evt.getSource() == cbmCompleteBinary) {
             cbmCompleteBinary.setSelected(true);
@@ -479,7 +479,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JButton btDelete;
     private javax.swing.JButton btGenerate;
     private javax.swing.JButton btSearch;
-    private javax.swing.JCheckBoxMenuItem cbmBalancedBinary;
+    private javax.swing.JCheckBoxMenuItem cbmAVLTree;
     private javax.swing.JCheckBoxMenuItem cbmCompleteBinary;
     private javax.swing.JCheckBoxMenuItem cbmDegeneratedBinary;
     private javax.swing.JCheckBoxMenuItem cbmPerfectBinary;

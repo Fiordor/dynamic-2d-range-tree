@@ -1,7 +1,6 @@
 package DynamicTreeStructures;
 
 import DynamicTreeStructures.imagegenerator.Image;
-import DynamicTreeStructures.imagegenerator.ImageRedBlackTree;
 import DynamicTreeStructures.imagegenerator.ImageTree;
 import DynamicTreeStructures.interfaces.TreeImage;
 import DynamicTreeStructures.interfaces.TreeStructure;
@@ -14,17 +13,11 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImagingOpException;
 import java.util.ArrayList;
 import java.util.Random;
-import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 /**
  *
  * @author Fiordor
@@ -75,6 +68,10 @@ public class Controller {
     public void setTreeType(int type) {
         this.type = type;
 
+        if (this.table != null) {
+            this.table.setRowCount(0);
+        }
+
         this.redBlackTree = null;
         this.tree = null;
 
@@ -120,8 +117,8 @@ public class Controller {
         print();
     }
 
-    public void clear() {
-        this.canvas.clear();
+    public void clearData() {
+        this.canvas.clearImage();
         this.canvas.repaint();
         this.table.setRowCount(0);
         this.zoom = 1.0;
@@ -151,7 +148,7 @@ public class Controller {
         if (input.length() == 0) {
             return;
         }
-        
+
         label.setText("Not implemented");
     }
 
@@ -171,7 +168,7 @@ public class Controller {
             }
 
             while (values.contains(random)) {
-                random = r.nextInt(1000);
+                random = r.nextInt(k * 10);
             }
 
             long start = System.nanoTime();
@@ -186,7 +183,7 @@ public class Controller {
             totalTime += (fin - start);
         }
 
-        label.setText(String.format("Generate %d: %d ns",k, totalTime));
+        label.setText(String.format("Generate %d: %d ns", k, totalTime));
         print();
     }
 
@@ -236,7 +233,7 @@ public class Controller {
          */
         TreeImage treeImage = redBlackTree == null
                 ? new ImageTree<>(tree, 16, 16)
-                : new ImageRedBlackTree<>(redBlackTree, 16, 16);
+                : new ImageTree<>(redBlackTree, 16, 16);
 
         try {
             this.image = new Image(treeImage, typeToString()).create();
