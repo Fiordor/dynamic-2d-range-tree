@@ -8,14 +8,14 @@ import DynamicTreeStructures.interfaces.TreeStructure;
  */
 public class RedBlackTree<K extends Comparable<K>> {
 
-    private RedBlackTreeNode<K> root;
+    private NodeRedBlackTree<K> root;
 
     public RedBlackTree() {
         this.root = null;
     }
 
     public RedBlackTree(K k) {
-        this.root = new RedBlackTreeNode<>(k);
+        this.root = new NodeRedBlackTree<>(k);
     }
 
     /**
@@ -23,7 +23,7 @@ public class RedBlackTree<K extends Comparable<K>> {
      *
      * @return root node or null
      */
-    public RedBlackTreeNode<K> getRoot() {
+    public NodeRedBlackTree<K> getRoot() {
         return root;
     }
 
@@ -58,7 +58,7 @@ public class RedBlackTree<K extends Comparable<K>> {
      * @return if the search has been success
      */
     public K search(K data) {
-        RedBlackTreeNode<K> node = root;
+        NodeRedBlackTree<K> node = root;
         while (node != null) {
             K nodeData = node.getData();
             if (nodeData.equals(data)) {
@@ -86,14 +86,14 @@ public class RedBlackTree<K extends Comparable<K>> {
      * @return
      */
     public K successor(K data) {
-        RedBlackTreeNode<K> res = successor(root, data);
+        NodeRedBlackTree<K> res = successor(root, data);
         if (res == null) {
             return null;
         }
         return res.getData();
     }
 
-    private RedBlackTreeNode<K> successor(RedBlackTreeNode<K> node, K data) {
+    private NodeRedBlackTree<K> successor(NodeRedBlackTree<K> node, K data) {
         //Base case
         if (node == null) {
             return null;
@@ -106,7 +106,7 @@ public class RedBlackTree<K extends Comparable<K>> {
         } else {
             //This node could be its successor, or the successor could be in this node's
             //left child
-            RedBlackTreeNode<K> res = successor(node.getLeft(), data);
+            NodeRedBlackTree<K> res = successor(node.getLeft(), data);
             //If there was a successor in the left subtree, it is found.
             //Otherwise...
             if (res == null) {
@@ -119,10 +119,10 @@ public class RedBlackTree<K extends Comparable<K>> {
     }
 
     //Returns the sub-tree with the inserted node
-    private RedBlackTreeNode<K> insert(RedBlackTreeNode<K> node, K data) {
+    private NodeRedBlackTree<K> insert(NodeRedBlackTree<K> node, K data) {
         //If the tree is empty (leaf), create the node
         if (node == null) {
-            return new RedBlackTreeNode<>(data);
+            return new NodeRedBlackTree<>(data);
         }
         //Else, we shall insert in one of the children.
         //First, check if the current node is a 4-node (split on the way down)
@@ -139,11 +139,11 @@ public class RedBlackTree<K extends Comparable<K>> {
         int cmp = data.compareTo(node.getData());
         if (cmp < 0) {
             //The data goes to the left
-            RedBlackTreeNode<K> leftNode = node.getLeft();
+            NodeRedBlackTree<K> leftNode = node.getLeft();
             leftNode = insert(leftNode, data);
             node.setLeft(leftNode);
         } else if (cmp > 0) { //The data goes to the right
-            RedBlackTreeNode<K> rightNode = node.getRight();
+            NodeRedBlackTree<K> rightNode = node.getRight();
             rightNode = insert(rightNode, data);
             node.setRight(rightNode);
         } else { //We are in a replacement!
@@ -154,8 +154,8 @@ public class RedBlackTree<K extends Comparable<K>> {
         //3-nodes are always balanced by definition (we allow right-leaning
         //as well as left-leaning).
         //There are four cases
-        RedBlackTreeNode<K> left = node.getLeft();
-        RedBlackTreeNode<K> right = node.getRight();
+        NodeRedBlackTree<K> left = node.getLeft();
+        NodeRedBlackTree<K> right = node.getRight();
         if (left != null && left.isRed()) {
             if (left.getLeft() != null && left.getLeft().isRed()) {
                 node = centerLeft4Node(node);
@@ -185,7 +185,7 @@ public class RedBlackTree<K extends Comparable<K>> {
      * @param root node to center
      * @return centered left node
      */
-    private RedBlackTreeNode<K> centerLeft4Node(RedBlackTreeNode<K> root) {
+    private NodeRedBlackTree<K> centerLeft4Node(NodeRedBlackTree<K> root) {
         root = rotateRight(root);
         root.setRed(false);
         root.getRight().setRed(true);
@@ -199,7 +199,7 @@ public class RedBlackTree<K extends Comparable<K>> {
      * @param root node to center
      * @return centered right node
      */
-    private RedBlackTreeNode<K> centerRight4Node(RedBlackTreeNode<K> root) {
+    private NodeRedBlackTree<K> centerRight4Node(NodeRedBlackTree<K> root) {
         root = rotateLeft(root);
         root.setRed(false);
         root.getLeft().setRed(true);
@@ -214,8 +214,8 @@ public class RedBlackTree<K extends Comparable<K>> {
      * @param oldRoot node to rotate
      * @return rotated right node
      */
-    private RedBlackTreeNode<K> rotateRight(RedBlackTreeNode<K> oldRoot) {
-        RedBlackTreeNode<K> newRoot = oldRoot.getLeft();
+    private NodeRedBlackTree<K> rotateRight(NodeRedBlackTree<K> oldRoot) {
+        NodeRedBlackTree<K> newRoot = oldRoot.getLeft();
         oldRoot.setLeft(newRoot.getRight());
         newRoot.setRight(oldRoot);
         return newRoot;
@@ -229,8 +229,8 @@ public class RedBlackTree<K extends Comparable<K>> {
      * @param oldRoot node to rotate
      * @return retated left node
      */
-    private RedBlackTreeNode<K> rotateLeft(RedBlackTreeNode<K> oldRoot) {
-        RedBlackTreeNode<K> newRoot = oldRoot.getRight();
+    private NodeRedBlackTree<K> rotateLeft(NodeRedBlackTree<K> oldRoot) {
+        NodeRedBlackTree<K> newRoot = oldRoot.getRight();
         oldRoot.setRight(newRoot.getLeft());
         newRoot.setLeft(oldRoot);
         return newRoot;

@@ -9,17 +9,16 @@ import DynamicTreeStructures.interfaces.TreeStructure;
 /**
  *
  * @author Fiordor
- * @param <K>
  */
-public class RootedBinaryTree<K extends Comparable<K>> implements TreeStructure<K> {
+public class BalancedBinaryTree<K extends Comparable<K>> implements TreeStructure<K> {
 
     private Node<K> root;
 
-    public RootedBinaryTree() {
+    public BalancedBinaryTree() {
         this.root = null;
     }
 
-    public RootedBinaryTree(K data) {
+    public BalancedBinaryTree(K data) {
         this.root = new Node<>(data);
     }
 
@@ -30,16 +29,12 @@ public class RootedBinaryTree<K extends Comparable<K>> implements TreeStructure<
 
     @Override
     public void insert(K data) {
-        if (this.root != null) {
-            insertNext(this.root, data);
-        } else {
-            this.root = new Node<>(data);
-        }
+
     }
 
     @Override
     public K search(K data) {
-        return this.root == null ? null : searchNext(this.root, data);
+        return null;
     }
 
     @Override
@@ -60,36 +55,6 @@ public class RootedBinaryTree<K extends Comparable<K>> implements TreeStructure<
         }
     }
 
-    private void insertNext(Node<K> node, K data) {
-
-        if (data.compareTo(node.getData()) < 0) {
-
-            if (node.getLeft() == null) {
-                node.setLeft(new Node<>(data));
-            } else {
-                insertNext(node.getLeft(), data);
-            }
-        } else {
-
-            if (node.getRight() == null) {
-                node.setRight(new Node<>(data));
-            } else {
-                insertNext(node.getRight(), data);
-            }
-        }
-    }
-
-    private K searchNext(Node<K> node, K data) {
-
-        if (data.compareTo(node.getData()) < 0) {
-            return node.getLeft() == null ? null : searchNext(node.getLeft(), data);
-        } else if (data.compareTo(node.getData()) > 0) {
-            return node.getRight() == null ? null : searchNext(node.getRight(), data);
-        } else {
-            return data;
-        }
-    }
-
     private void toStringNext(Node<K> node, StringBuilder builder) {
 
         if (node.getLeft() != null) {
@@ -102,4 +67,5 @@ public class RootedBinaryTree<K extends Comparable<K>> implements TreeStructure<
             toStringNext(node.getRight(), builder);
         }
     }
+
 }

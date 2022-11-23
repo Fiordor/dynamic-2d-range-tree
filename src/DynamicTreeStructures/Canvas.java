@@ -23,10 +23,7 @@ public class Canvas extends JPanel {
     }
 
     public Canvas(BufferedImage bufferedImage) {
-        this.bufferedImage = bufferedImage;
-        this.x = 0;
-        this.y = 0;
-        this.zoom = 1.0;
+        setImage(bufferedImage);
     }
 
     public void clear() {
@@ -38,8 +35,14 @@ public class Canvas extends JPanel {
 
     public void setImage(BufferedImage bufferedImage) {
         this.bufferedImage = bufferedImage;
-        this.x = 0;
-        this.y = 0;
+        if (bufferedImage == null) {
+            this.x = 0;
+            this.y = 0;
+        } else {
+            this.x = (getWidth() / 2) - (bufferedImage.getWidth() / 2);
+            this.y = (getHeight() / 2) - (bufferedImage.getHeight() / 2);
+        }
+
         this.zoom = 1.0;
     }
 

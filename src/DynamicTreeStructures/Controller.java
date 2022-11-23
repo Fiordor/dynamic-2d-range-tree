@@ -11,9 +11,15 @@ import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImagingOpException;
+import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -37,8 +43,9 @@ public class Controller {
     private TreeStructure<Integer> tree;
     private RedBlackTree<Integer> redBlackTree;
 
-    private DefaultListModel<String> list;
+    private DefaultTableModel table;
 
+    private JLabel label;
     private Canvas canvas;
     private BufferedImage image;
 
@@ -46,14 +53,16 @@ public class Controller {
     private int canvasY;
     private double zoom;
 
-    public Controller(JPanel panel) {
-        this(panel, RED_BLACK_TREE);
+    public Controller(JPanel panel, JTable table, JLabel label) {
+        this(panel, table, label, RED_BLACK_TREE);
     }
 
-    public Controller(JPanel panel, int type) {
+    public Controller(JPanel panel, JTable table, JLabel label, int type) {
 
         setTreeType(type);
-        this.list = new DefaultListModel<>();
+        this.label = label;
+        this.table = (DefaultTableModel) table.getModel();
+        table.getColumn("#").setPreferredWidth(30);
         this.canvas = new Canvas();
         this.zoom = 1.0;
 
@@ -87,10 +96,6 @@ public class Controller {
         }
     }
 
-    public DefaultListModel<String> getList() {
-        return list;
-    }
-
     public void setSize(int w, int h) {
         canvas.setSize(w, h);
     }
@@ -109,15 +114,16 @@ public class Controller {
         }
         long fin = System.nanoTime();
 
-        list.addElement(String.format("%d. %s (%d ns)", list.getSize(), input, (fin - start)));
+        table.addRow(new Object[]{table.getRowCount() + 1, input, (fin - start)});
 
+        label.setText(String.format("Insert %d: %d ns", value, fin - start));
         print();
     }
 
     public void clear() {
         this.canvas.clear();
         this.canvas.repaint();
-        this.list.clear();
+        this.table.setRowCount(0);
         this.zoom = 1.0;
 
         this.setTreeType(type);
@@ -127,12 +133,26 @@ public class Controller {
         if (input.length() == 0) {
             return;
         }
+        int value = Integer.parseInt(input);
+
+        long start = System.nanoTime();
+        if (redBlackTree == null) {
+            tree.search(value);
+        } else {
+            redBlackTree.search(value);
+        }
+        long fin = System.nanoTime();
+
+        label.setText(String.format("Search %d: %d ns", value, fin - start));
+        print();
     }
 
     public void delete(String input) {
         if (input.length() == 0) {
             return;
         }
+        
+        label.setText("Not implemented");
     }
 
     public void generate(String input) {
@@ -140,11 +160,17 @@ public class Controller {
             return;
         }
         int k = Integer.parseInt(input);
-
+        long totalTime = 0;
         Random r = new Random();
         for (int i = 0; i < k; i++) {
-            int random = r.nextInt(1000);
-            while (list.contains(String.valueOf(random))) {
+            int random = r.nextInt(k * 10);
+
+            ArrayList<Integer> values = new ArrayList<>(table.getRowCount());
+            for (int j = 0; j < values.size(); j++) {
+                values.add(Integer.valueOf(table.getValueAt(j, 1).toString()));
+            }
+
+            while (values.contains(random)) {
                 random = r.nextInt(1000);
             }
 
@@ -156,9 +182,11 @@ public class Controller {
             }
             long fin = System.nanoTime();
 
-            list.addElement(String.format("%d. %d (%d ns)", list.getSize(), random, (fin - start)));
+            table.addRow(new Object[]{table.getRowCount() + 1, random, (fin - start)});
+            totalTime += (fin - start);
         }
 
+        label.setText(String.format("Generate %d: %d ns",k, totalTime));
         print();
     }
 
@@ -178,6 +206,10 @@ public class Controller {
 
     public void zoom(int zoom) {
 
+        if (this.image == null) {
+            return;
+        }
+
         this.zoom = this.zoom - (zoom / 10.0);
 
         int w = (int) Math.ceil(this.image.getWidth() * (this.zoom > 0 ? this.zoom : 1));
@@ -185,10 +217,14 @@ public class Controller {
         BufferedImage scaledImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         AffineTransform at = AffineTransform.getScaleInstance(this.zoom, this.zoom);
         AffineTransformOp ato = new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC);
-        scaledImage = ato.filter(image, scaledImage);
+        try {
+            scaledImage = ato.filter(image, scaledImage);
 
-        canvas.setImage(scaledImage);
-        canvas.repaint();
+            canvas.setImage(scaledImage);
+            canvas.repaint();
+        } catch (ImagingOpException ex) {
+            label.setText(ex.getMessage());
+        }
     }
 
     private void print() {
@@ -198,20 +234,17 @@ public class Controller {
                 ? tree.toString()
                 : redBlackTree.toString());
          */
-        long start = System.currentTimeMillis();
         TreeImage treeImage = redBlackTree == null
                 ? new ImageTree<>(tree, 16, 16)
                 : new ImageRedBlackTree<>(redBlackTree, 16, 16);
-        long stop = System.currentTimeMillis();
-        //System.out.println("Create image: " + (stop - start) + " ms");
 
-        start = System.currentTimeMillis();
-        this.image = new Image(treeImage, typeToString()).create();
-        stop = System.currentTimeMillis();
-
-        //System.out.println("print image: " + (stop - start) + " ms");
-        canvas.setImage(this.image);
-        canvas.repaint();
+        try {
+            this.image = new Image(treeImage, typeToString()).create();
+            canvas.setImage(this.image);
+            canvas.repaint();
+        } catch (OutOfMemoryError | NegativeArraySizeException | IllegalArgumentException ex) {
+            label.setText(ex.getMessage());
+        }
     }
 
     private String typeToString() {

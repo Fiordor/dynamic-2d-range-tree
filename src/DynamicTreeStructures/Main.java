@@ -26,8 +26,7 @@ public class Main extends javax.swing.JFrame {
         pnCanvas.setBackground(Color.WHITE);
 
         cbmRootedBinary.setSelected(true);
-        controller = new Controller(pnCanvas, Controller.ROOTED_BINARY_TREE);
-        ltValues.setModel(controller.getList());
+        controller = new Controller(pnCanvas, tlValues, lbInfo, Controller.ROOTED_BINARY_TREE);
 
         getContentPane().setBackground(new Color(150, 150, 150));
 
@@ -49,8 +48,9 @@ public class Main extends javax.swing.JFrame {
         btSearch = new javax.swing.JButton();
         btDelete = new javax.swing.JButton();
         btGenerate = new javax.swing.JButton();
-        spListValues = new javax.swing.JScrollPane();
-        ltValues = new javax.swing.JList<>();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tlValues = new javax.swing.JTable();
+        lbInfo = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         miSave = new javax.swing.JMenuItem();
@@ -62,6 +62,10 @@ public class Main extends javax.swing.JFrame {
         miSearch = new javax.swing.JMenuItem();
         miDelete = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
+        cbmBalancedBinary = new javax.swing.JCheckBoxMenuItem();
+        cbmCompleteBinary = new javax.swing.JCheckBoxMenuItem();
+        cbmDegeneratedBinary = new javax.swing.JCheckBoxMenuItem();
+        cbmPerfectBinary = new javax.swing.JCheckBoxMenuItem();
         cbmRootedBinary = new javax.swing.JCheckBoxMenuItem();
         cbmRedblack = new javax.swing.JCheckBoxMenuItem();
 
@@ -99,7 +103,7 @@ public class Main extends javax.swing.JFrame {
         );
         pnCanvasLayout.setVerticalGroup(
             pnCanvasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 363, Short.MAX_VALUE)
         );
 
         tfInput.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -145,9 +149,38 @@ public class Main extends javax.swing.JFrame {
             }
         });
 
-        spListValues.setPreferredSize(new java.awt.Dimension(0, 0));
+        tlValues.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
 
-        spListValues.setViewportView(ltValues);
+            },
+            new String [] {
+                "#", "Value", "(ns)"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.Long.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tlValues.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tlValuesMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tlValues);
+
+        lbInfo.setText("Without tree");
+        lbInfo.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
 
         jMenu1.setText("File");
 
@@ -217,6 +250,38 @@ public class Main extends javax.swing.JFrame {
 
         jMenu2.setText("Structure");
 
+        cbmBalancedBinary.setText("Balanced binary tree");
+        cbmBalancedBinary.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbmMenu(evt);
+            }
+        });
+        jMenu2.add(cbmBalancedBinary);
+
+        cbmCompleteBinary.setText("Complete binary tree");
+        cbmCompleteBinary.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbmCompleteBinaryActionPerformed(evt);
+            }
+        });
+        jMenu2.add(cbmCompleteBinary);
+
+        cbmDegeneratedBinary.setText("Degenerated binary tree");
+        cbmDegeneratedBinary.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbmMenu(evt);
+            }
+        });
+        jMenu2.add(cbmDegeneratedBinary);
+
+        cbmPerfectBinary.setText("Perfect binary tree");
+        cbmPerfectBinary.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbmMenu(evt);
+            }
+        });
+        jMenu2.add(cbmPerfectBinary);
+
         cbmRootedBinary.setText("Rooted binary tree");
         cbmRootedBinary.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -243,9 +308,9 @@ public class Main extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(spListValues, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tfInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(tfInput, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -255,7 +320,9 @@ public class Main extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btDelete)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btGenerate))
+                        .addComponent(btGenerate)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lbInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(pnCanvas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(16, 16, 16))
         );
@@ -263,16 +330,18 @@ public class Main extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tfInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btGenerate, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(tfInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btGenerate, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lbInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(spListValues, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
-                    .addComponent(pnCanvas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(pnCanvas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addGap(16, 16, 16))
         );
 
@@ -350,10 +419,26 @@ public class Main extends javax.swing.JFrame {
 
     private void cbmMenu(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbmMenu
         
+        cbmBalancedBinary.setSelected(false);
+        cbmCompleteBinary.setSelected(false);
+        cbmDegeneratedBinary.setSelected(false);
+        cbmPerfectBinary.setSelected(false);
         cbmRootedBinary.setSelected(false);
         cbmRedblack.setSelected(false);
         
-        if (evt.getSource() == cbmRootedBinary) {
+        if (evt.getSource() == cbmBalancedBinary) {
+            cbmBalancedBinary.setSelected(true);
+            controller.setTreeType(Controller.BALANCED_BINARY_TREE);
+        } else if (evt.getSource() == cbmCompleteBinary) {
+            cbmCompleteBinary.setSelected(true);
+            controller.setTreeType(Controller.COMPLETE_BINARY_TREE);
+        } else if (evt.getSource() == cbmDegeneratedBinary) {
+            cbmDegeneratedBinary.setSelected(true);
+            controller.setTreeType(Controller.DEGENERATE_BINARY_TREE);
+        } else if (evt.getSource() == cbmPerfectBinary) {
+            cbmPerfectBinary.setSelected(true);
+            controller.setTreeType(Controller.PERFECT_BINARY_TREE);
+        } else if (evt.getSource() == cbmRootedBinary) {
             cbmRootedBinary.setSelected(true);
             controller.setTreeType(Controller.ROOTED_BINARY_TREE);
         } else if (evt.getSource() == cbmRedblack) {
@@ -361,6 +446,15 @@ public class Main extends javax.swing.JFrame {
             controller.setTreeType(Controller.RED_BLACK_TREE);
         }
     }//GEN-LAST:event_cbmMenu
+
+    private void cbmCompleteBinaryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbmCompleteBinaryActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbmCompleteBinaryActionPerformed
+
+    private void tlValuesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tlValuesMouseClicked
+        int row = tlValues.getSelectedRow();
+        tfInput.setText(tlValues.getModel().getValueAt(row, 1).toString());
+    }//GEN-LAST:event_tlValuesMouseClicked
 
     /**
      * @param args the command line arguments
@@ -385,13 +479,18 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JButton btDelete;
     private javax.swing.JButton btGenerate;
     private javax.swing.JButton btSearch;
+    private javax.swing.JCheckBoxMenuItem cbmBalancedBinary;
+    private javax.swing.JCheckBoxMenuItem cbmCompleteBinary;
+    private javax.swing.JCheckBoxMenuItem cbmDegeneratedBinary;
+    private javax.swing.JCheckBoxMenuItem cbmPerfectBinary;
     private javax.swing.JCheckBoxMenuItem cbmRedblack;
     private javax.swing.JCheckBoxMenuItem cbmRootedBinary;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JList<String> ltValues;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lbInfo;
     private javax.swing.JMenuItem miAdd;
     private javax.swing.JMenuItem miClear;
     private javax.swing.JMenuItem miDelete;
@@ -400,7 +499,7 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JMenuItem miSave;
     private javax.swing.JMenuItem miSearch;
     private javax.swing.JPanel pnCanvas;
-    private javax.swing.JScrollPane spListValues;
     private javax.swing.JTextField tfInput;
+    private javax.swing.JTable tlValues;
     // End of variables declaration//GEN-END:variables
 }

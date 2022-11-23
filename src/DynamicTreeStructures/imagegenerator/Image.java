@@ -77,11 +77,6 @@ public class Image {
             marginY = height - bufferedImageHeight;
             bufferedImageHeight = height;
         }
-        
-        System.out.println(stringBounds[0]);
-        System.out.println(minWidth);
-        System.out.println(bufferedImageWidth);
-        System.out.println(marginX);
 
         BufferedImage bufferedImage = new BufferedImage(bufferedImageWidth, bufferedImageHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = bufferedImage.createGraphics();

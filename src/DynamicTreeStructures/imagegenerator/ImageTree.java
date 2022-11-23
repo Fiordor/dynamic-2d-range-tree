@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package DynamicTreeStructures.imagegenerator;
 
 import DynamicTreeStructures.interfaces.TreeImage;
@@ -14,6 +10,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  *
@@ -43,7 +40,7 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
     }
 
     public ImageTree(TreeStructure<K> tree, int gapWidth, int gapHeight, Font font) {
-
+        
         this.font = font;
         this.maxLabelWidth = 0;
         this.maxLabelHeight = 0;
@@ -234,7 +231,6 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
         double rawWidth = bounds.getWidth();
         double rawHeight = bounds.getHeight();
 
-        //System.out.println(rawHeight + " " + calcBoundsFontMetrics.getHeight());
         int w = rawWidth % 1 == 0 ? (int) rawWidth : (int) rawWidth + 1;
         int h = rawHeight % 1 == 0 ? (int) rawHeight : (int) rawHeight + 1;
         return new int[]{w, h};

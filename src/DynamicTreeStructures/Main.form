@@ -97,6 +97,38 @@
             <Property name="text" type="java.lang.String" value="Structure"/>
           </Properties>
           <SubComponents>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cbmBalancedBinary">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Balanced binary tree"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbmMenu"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cbmCompleteBinary">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Complete binary tree"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbmCompleteBinaryActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cbmDegeneratedBinary">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Degenerated binary tree"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbmMenu"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cbmPerfectBinary">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Perfect binary tree"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbmMenu"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cbmRootedBinary">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Rooted binary tree"/>
@@ -146,13 +178,13 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="spListValues" min="-2" pref="150" max="-2" attributes="0"/>
-                  <Component id="tfInput" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="jScrollPane1" pref="0" max="32767" attributes="0"/>
+                  <Component id="tfInput" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <Component id="btAdd" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btSearch" min="-2" max="-2" attributes="0"/>
@@ -160,6 +192,8 @@
                       <Component id="btDelete" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btGenerate" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="lbInfo" max="32767" attributes="0"/>
                   </Group>
                   <Component id="pnCanvas" max="32767" attributes="0"/>
               </Group>
@@ -171,17 +205,20 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="tfInput" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="btAdd" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
-                  <Component id="btSearch" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
-                  <Component id="btDelete" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
-                  <Component id="btGenerate" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="tfInput" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btAdd" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
+                      <Component id="btSearch" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
+                      <Component id="btDelete" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
+                      <Component id="btGenerate" alignment="3" min="-2" pref="31" max="-2" attributes="0"/>
+                  </Group>
+                  <Component id="lbInfo" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="spListValues" pref="296" max="32767" attributes="0"/>
                   <Component id="pnCanvas" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
           </Group>
@@ -205,7 +242,7 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="363" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -280,29 +317,34 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btGenerateActionPerformed"/>
       </Events>
     </Component>
-    <Container class="javax.swing.JScrollPane" name="spListValues">
-      <Properties>
-        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[0, 0]"/>
-        </Property>
-      </Properties>
+    <Container class="javax.swing.JScrollPane" name="jScrollPane1">
       <AuxValues>
         <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
       </AuxValues>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JList" name="ltValues">
+        <Component class="javax.swing.JTable" name="tlValues">
           <Properties>
-            <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
-              <StringArray count="0"/>
+            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+              <Table columnCount="3" rowCount="0">
+                <Column editable="false" title="#" type="java.lang.Integer"/>
+                <Column editable="false" title="Value" type="java.lang.String"/>
+                <Column editable="false" title="(ns)" type="java.lang.Long"/>
+              </Table>
             </Property>
           </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-          </AuxValues>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tlValuesMouseClicked"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JLabel" name="lbInfo">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Without tree"/>
+        <Property name="verticalAlignment" type="int" value="3"/>
+      </Properties>
+    </Component>
   </SubComponents>
 </Form>

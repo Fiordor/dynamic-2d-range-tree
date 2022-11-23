@@ -5,21 +5,21 @@ package DynamicTreeStructures.structure;
  *
  * @author Fiordor
  */
-public class RedBlackTreeNode<K extends Comparable<K>> implements Comparable<RedBlackTreeNode<K>> {
+public class NodeRedBlackTree<K extends Comparable<K>> implements Comparable<NodeRedBlackTree<K>> {
 
     public static final boolean BLACK = false;
     public static final boolean RED = true;
  
     private K data;
-    private RedBlackTreeNode<K> left;
-    private RedBlackTreeNode<K> right;
+    private NodeRedBlackTree<K> left;
+    private NodeRedBlackTree<K> right;
     private boolean isRed;
 
-    public RedBlackTreeNode(K data) {
+    public NodeRedBlackTree(K data) {
         this(data, true);
     }
 
-    public RedBlackTreeNode(K data, boolean isRed) {
+    public NodeRedBlackTree(K data, boolean isRed) {
         this.data = data;
         this.left = null;
         this.right = null;
@@ -30,11 +30,11 @@ public class RedBlackTreeNode<K extends Comparable<K>> implements Comparable<Red
         return data;
     }
 
-    public RedBlackTreeNode<K> getLeft() {
+    public NodeRedBlackTree<K> getLeft() {
         return left;
     }
 
-    public RedBlackTreeNode<K> getRight() {
+    public NodeRedBlackTree<K> getRight() {
         return right;
     }
 
@@ -46,11 +46,11 @@ public class RedBlackTreeNode<K extends Comparable<K>> implements Comparable<Red
         this.data = data;
     }
 
-    public void setLeft(RedBlackTreeNode<K> left) {
+    public void setLeft(NodeRedBlackTree<K> left) {
         this.left = left;
     }
 
-    public void setRight(RedBlackTreeNode<K> right) {
+    public void setRight(NodeRedBlackTree<K> right) {
         this.right = right;
     }
 
@@ -59,7 +59,7 @@ public class RedBlackTreeNode<K extends Comparable<K>> implements Comparable<Red
     }
 
     @Override
-    public int compareTo(RedBlackTreeNode<K> k) {
+    public int compareTo(NodeRedBlackTree<K> k) {
         return data.compareTo(k.getData());
     }
 
