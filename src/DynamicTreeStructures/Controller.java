@@ -33,8 +33,7 @@ public class Controller {
 
     private int type;
 
-    private TreeStructure<Integer> tree;
-    private RedBlackTree<Integer> redBlackTree;
+    private TreeStructure tree;
 
     private DefaultTableModel table;
 
@@ -72,7 +71,6 @@ public class Controller {
             this.table.setRowCount(0);
         }
 
-        this.redBlackTree = null;
         this.tree = null;
 
         switch (type) {
@@ -85,10 +83,10 @@ public class Controller {
             case PERFECT_BINARY_TREE:
                 break;
             case ROOTED_BINARY_TREE:
-                this.tree = new RootedBinaryTree<>();
+                this.tree = new RootedBinaryTree<Integer>();
                 break;
             case RED_BLACK_TREE:
-                this.redBlackTree = new RedBlackTree<>();
+                this.tree = new RedBlackTree<Integer>();
                 break;
         }
     }
@@ -104,11 +102,7 @@ public class Controller {
         int value = Integer.parseInt(input);
 
         long start = System.nanoTime();
-        if (redBlackTree == null) {
-            tree.insert(value);
-        } else {
-            redBlackTree.insert(value);
-        }
+        tree.insert(value);
         long fin = System.nanoTime();
 
         table.addRow(new Object[]{table.getRowCount() + 1, input, (fin - start)});
@@ -133,11 +127,7 @@ public class Controller {
         int value = Integer.parseInt(input);
 
         long start = System.nanoTime();
-        if (redBlackTree == null) {
-            tree.search(value);
-        } else {
-            redBlackTree.search(value);
-        }
+        tree.search(value);
         long fin = System.nanoTime();
 
         label.setText(String.format("Search %d: %d ns", value, fin - start));
@@ -172,11 +162,7 @@ public class Controller {
             }
 
             long start = System.nanoTime();
-            if (redBlackTree == null) {
-                tree.insert(random);
-            } else {
-                redBlackTree.insert(random);
-            }
+            tree.insert(random);
             long fin = System.nanoTime();
 
             table.addRow(new Object[]{table.getRowCount() + 1, random, (fin - start)});
@@ -231,9 +217,7 @@ public class Controller {
                 ? tree.toString()
                 : redBlackTree.toString());
          */
-        TreeImage treeImage = redBlackTree == null
-                ? new ImageTree<>(tree, 16, 16)
-                : new ImageTree<>(redBlackTree, 16, 16);
+        TreeImage treeImage = new ImageTree<>(tree, 16, 16);
 
         try {
             this.image = new Image(treeImage, typeToString()).create();

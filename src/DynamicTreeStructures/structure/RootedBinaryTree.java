@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package DynamicTreeStructures.structure;
 
 import DynamicTreeStructures.interfaces.TreeStructure;
@@ -11,20 +8,20 @@ import DynamicTreeStructures.interfaces.TreeStructure;
  * @author Fiordor
  * @param <K>
  */
-public class RootedBinaryTree<K extends Comparable<K>> implements TreeStructure<K> {
+public class RootedBinaryTree<K extends Comparable<K>> implements TreeStructure<NodeRootedBinaryTree<K>, K> {
 
-    private Node<K> root;
+    private NodeRootedBinaryTree<K> root;
 
     public RootedBinaryTree() {
         this.root = null;
     }
 
     public RootedBinaryTree(K data) {
-        this.root = new Node<>(data);
+        this.root = new NodeRootedBinaryTree<>(data);
     }
 
     @Override
-    public Node<K> getRoot() {
+    public NodeRootedBinaryTree<K> getRoot() {
         return root;
     }
 
@@ -33,7 +30,7 @@ public class RootedBinaryTree<K extends Comparable<K>> implements TreeStructure<
         if (this.root != null) {
             insertNext(this.root, data);
         } else {
-            this.root = new Node<>(data);
+            this.root = new NodeRootedBinaryTree<>(data);
         }
     }
 
@@ -60,26 +57,26 @@ public class RootedBinaryTree<K extends Comparable<K>> implements TreeStructure<
         }
     }
 
-    private void insertNext(Node<K> node, K data) {
+    private void insertNext(NodeRootedBinaryTree<K> node, K data) {
 
         if (data.compareTo(node.getData()) < 0) {
 
             if (node.getLeft() == null) {
-                node.setLeft(new Node<>(data));
+                node.setLeft(new NodeRootedBinaryTree<>(data));
             } else {
                 insertNext(node.getLeft(), data);
             }
         } else {
 
             if (node.getRight() == null) {
-                node.setRight(new Node<>(data));
+                node.setRight(new NodeRootedBinaryTree<>(data));
             } else {
                 insertNext(node.getRight(), data);
             }
         }
     }
 
-    private K searchNext(Node<K> node, K data) {
+    private K searchNext(NodeRootedBinaryTree<K> node, K data) {
 
         if (data.compareTo(node.getData()) < 0) {
             return node.getLeft() == null ? null : searchNext(node.getLeft(), data);
@@ -90,7 +87,7 @@ public class RootedBinaryTree<K extends Comparable<K>> implements TreeStructure<
         }
     }
 
-    private void toStringNext(Node<K> node, StringBuilder builder) {
+    private void toStringNext(NodeRootedBinaryTree<K> node, StringBuilder builder) {
 
         if (node.getLeft() != null) {
             builder.append('|').append(node.getLeft().toString());

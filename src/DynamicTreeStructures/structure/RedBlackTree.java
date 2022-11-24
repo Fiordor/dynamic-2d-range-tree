@@ -5,8 +5,9 @@ import DynamicTreeStructures.interfaces.TreeStructure;
 /**
  *
  * @author Fiordor
+ * @param <K>
  */
-public class RedBlackTree<K extends Comparable<K>> {
+public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<NodeRedBlackTree<K>, K> {
 
     private NodeRedBlackTree<K> root;
 
@@ -23,6 +24,7 @@ public class RedBlackTree<K extends Comparable<K>> {
      *
      * @return root node or null
      */
+    @Override
     public NodeRedBlackTree<K> getRoot() {
         return root;
     }
@@ -36,6 +38,7 @@ public class RedBlackTree<K extends Comparable<K>> {
      *
      * @param k value to insert
      */
+    @Override
     public void insert(K k) {
         root = insert(root, k);
         root.setRed(false);
@@ -46,6 +49,7 @@ public class RedBlackTree<K extends Comparable<K>> {
      *
      * @return
      */
+    @Override
     public K delete(K k) {
         return null;
     }
@@ -57,6 +61,7 @@ public class RedBlackTree<K extends Comparable<K>> {
      * @param data value to search
      * @return if the search has been success
      */
+    @Override
     public K search(K data) {
         NodeRedBlackTree<K> node = root;
         while (node != null) {

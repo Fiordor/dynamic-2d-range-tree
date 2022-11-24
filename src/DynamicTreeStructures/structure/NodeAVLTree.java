@@ -6,16 +6,19 @@ package DynamicTreeStructures.structure;
  * @author Fiordor
  * @param <K>
  */
-public class NodeRootedBinaryTree<K extends Comparable<K>> implements Comparable<NodeRootedBinaryTree<K>>{
+public class NodeAVLTree<K extends Comparable<K>> implements Comparable<NodeAVLTree<K>> {
 
     private K data;
-    private NodeRootedBinaryTree<K> left;
-    private NodeRootedBinaryTree<K> right;
+    private NodeAVLTree<K> left;
+    private NodeAVLTree<K> right;
+    
+    private int factor;
 
-    public NodeRootedBinaryTree(K data) {
+    public NodeAVLTree(K data) {
         this.data = data;
         this.left = null;
         this.right = null;
+        this.factor = 0;
     }
 
     public K getData() {
@@ -26,32 +29,32 @@ public class NodeRootedBinaryTree<K extends Comparable<K>> implements Comparable
         this.data = data;
     }
 
-    public NodeRootedBinaryTree<K> getLeft() {
+    public NodeAVLTree<K> getLeft() {
         return left;
     }
 
-    public void setLeft(NodeRootedBinaryTree<K> left) {
+    public void setLeft(NodeAVLTree<K> left) {
         this.left = left;
     }
 
-    public NodeRootedBinaryTree<K> getRight() {
+    public NodeAVLTree<K> getRight() {
         return right;
     }
 
-    public void setRight(NodeRootedBinaryTree<K> right) {
+    public void setRight(NodeAVLTree<K> right) {
         this.right = right;
     }
     
     @Override
-    public int compareTo(NodeRootedBinaryTree<K> data) {
+    public int compareTo(NodeAVLTree<K> data) {
         return this.data.compareTo(data.getData());
     }
 
     @Override
     public String toString() {
-        String l = left == null ? "null" : left.data.toString();
+        String l = left == null ? "null" : left.getData().toString();
         String d = data.toString();
-        String r = right == null ? "null" : right.data.toString();
+        String r = right == null ? "null" : right.getData().toString();
         return String.format("%s;%s;%s", l, d, r);
     }
 }

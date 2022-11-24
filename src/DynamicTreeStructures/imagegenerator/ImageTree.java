@@ -2,9 +2,10 @@ package DynamicTreeStructures.imagegenerator;
 
 import DynamicTreeStructures.interfaces.TreeImage;
 import DynamicTreeStructures.interfaces.TreeStructure;
-import DynamicTreeStructures.structure.Node;
+import DynamicTreeStructures.structure.NodeRootedBinaryTree;
 import DynamicTreeStructures.structure.NodeRedBlackTree;
 import DynamicTreeStructures.structure.RedBlackTree;
+import DynamicTreeStructures.structure.RootedBinaryTree;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -19,7 +20,7 @@ import java.util.List;
  * @author Fiordor
  * @param <K>
  */
-public class ImageTree<K extends Comparable<K>> implements TreeImage {
+public class ImageTree<T, K extends Comparable<K>> implements TreeImage {
 
     private ImageNode[][] nodeMatrix;
     private int width;
@@ -33,48 +34,34 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
     private Graphics2D calcBoundsG2D;
     private FontMetrics calcBoundsFontMetrics;
 
-    public ImageTree(TreeStructure<K> tree) {
+    public ImageTree(TreeStructure<T, K> tree) {
         this(tree, 4, 16, new Font(Font.MONOSPACED, Font.PLAIN, 16));
     }
 
-    public ImageTree(RedBlackTree<K> tree) {
-        this(tree, 4, 16, new Font(Font.MONOSPACED, Font.PLAIN, 16));
-    }
-
-    public ImageTree(TreeStructure<K> tree, int gapWidth, int gapHeight) {
+    public ImageTree(TreeStructure<T, K> tree, int gapWidth, int gapHeight) {
         this(tree, gapWidth, gapHeight, new Font(Font.MONOSPACED, Font.PLAIN, 16));
     }
 
-    public ImageTree(RedBlackTree<K> tree, int gapWidth, int gapHeight) {
-        this(tree, gapWidth, gapHeight, new Font(Font.MONOSPACED, Font.PLAIN, 16));
-    }
-
-    public ImageTree(TreeStructure<K> tree, int gapWidth, int gapHeight, Font font) {
+    public ImageTree(TreeStructure<T, K> tree, int gapWidth, int gapHeight, Font font) {
         init(font);
 
         if (tree != null) {
             List< List<ImageNode>> rawMatrix = new ArrayList<>();
-            next(null, tree.getRoot(), 0, rawMatrix);
+            Class<?> classType = tree.getClass();
+            
+            if (classType.equals(RootedBinaryTree.class)) {
+                next(null, (NodeRootedBinaryTree<K>)tree.getRoot(), 0, rawMatrix);
+            } else if (classType.equals(RedBlackTree.class)) {
+                next(null, (NodeRedBlackTree<K>)tree.getRoot(), 0, rawMatrix);
+            }
+            
             this.nodeMatrix = toNodeMatrix(rawMatrix);
             assign(gapWidth, gapHeight);
         } else {
             nodeMatrix = null;
         }
     }
-
-    public ImageTree(RedBlackTree<K> tree, int gapWidth, int gapHeight, Font font) {
-        init(font);
-
-        if (tree != null) {
-            List< List<ImageNode>> rawMatrix = new ArrayList<>();
-            next(null, tree.getRoot(), 0, rawMatrix);
-            this.nodeMatrix = toNodeMatrix(rawMatrix);
-            assign(gapWidth, gapHeight);
-        } else {
-            nodeMatrix = null;
-        }
-    }
-
+    
     @Override
     public Font getFont() {
         return font;
@@ -222,7 +209,7 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
      * @param deep profundidad del árbol.
      * @param matrix array bidimensional donde se añaden los nuevos nodos.
      */
-    private void next(ImageNode parent, Node<K> child, int deep, List<List<ImageNode>> matrix) {
+    private void next(ImageNode parent, NodeRootedBinaryTree<K> child, int deep, List<List<ImageNode>> matrix) {
 
         if (deep >= matrix.size()) {
             matrix.add(new ArrayList<>());
@@ -283,7 +270,7 @@ public class ImageTree<K extends Comparable<K>> implements TreeImage {
         return new int[]{w, h};
     }
 
-    private ImageNode parse(Node<K> node) {
+    private ImageNode parse(NodeRootedBinaryTree<K> node) {
         ImageNode imageNode = new ImageNode(node.getData().toString());
         if (node.getLeft() != null) {
             imageNode.left = node.getLeft().getData().toString();

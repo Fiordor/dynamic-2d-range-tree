@@ -4,16 +4,17 @@
  */
 package DynamicTreeStructures.interfaces;
 
-import DynamicTreeStructures.structure.Node;
+import DynamicTreeStructures.structure.NodeRootedBinaryTree;
 
 /**
  *
  * @author Fiordor
  * @param <K>
+ * @param <T>
  */
-public interface TreeStructure<K extends Comparable<K>> {
+public interface TreeStructure< T, K extends Comparable<K> >  {
     
-    public Node<K> getRoot();
+    public T getRoot();
     
     public void insert(K data);
     

@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package DynamicTreeStructures.structure;
 
 import DynamicTreeStructures.interfaces.TreeStructure;
@@ -9,21 +6,22 @@ import DynamicTreeStructures.interfaces.TreeStructure;
 /**
  *
  * @author Fiordor
+ * @param <K>
  */
-public class BalancedBinaryTree<K extends Comparable<K>> implements TreeStructure<K> {
+public class AVLTree<K extends Comparable<K>> implements TreeStructure<NodeAVLTree, K> {
 
-    private Node<K> root;
+    private NodeAVLTree<K> root;
 
-    public BalancedBinaryTree() {
+    public AVLTree() {
         this.root = null;
     }
 
-    public BalancedBinaryTree(K data) {
-        this.root = new Node<>(data);
+    public AVLTree(K data) {
+        this.root = new NodeAVLTree<>(data);
     }
 
     @Override
-    public Node<K> getRoot() {
+    public NodeAVLTree<K> getRoot() {
         return root;
     }
 
@@ -55,7 +53,7 @@ public class BalancedBinaryTree<K extends Comparable<K>> implements TreeStructur
         }
     }
 
-    private void toStringNext(Node<K> node, StringBuilder builder) {
+    private void toStringNext(NodeAVLTree<K> node, StringBuilder builder) {
 
         if (node.getLeft() != null) {
             builder.append('|').append(node.getLeft().toString());
@@ -67,5 +65,4 @@ public class BalancedBinaryTree<K extends Comparable<K>> implements TreeStructur
             toStringNext(node.getRight(), builder);
         }
     }
-
 }
