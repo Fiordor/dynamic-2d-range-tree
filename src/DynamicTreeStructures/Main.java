@@ -63,9 +63,6 @@ public class Main extends javax.swing.JFrame {
         miDelete = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         cbmAVLTree = new javax.swing.JCheckBoxMenuItem();
-        cbmCompleteBinary = new javax.swing.JCheckBoxMenuItem();
-        cbmDegeneratedBinary = new javax.swing.JCheckBoxMenuItem();
-        cbmPerfectBinary = new javax.swing.JCheckBoxMenuItem();
         cbmRootedBinary = new javax.swing.JCheckBoxMenuItem();
         cbmRedblack = new javax.swing.JCheckBoxMenuItem();
 
@@ -258,30 +255,6 @@ public class Main extends javax.swing.JFrame {
         });
         jMenu2.add(cbmAVLTree);
 
-        cbmCompleteBinary.setText("Complete binary tree");
-        cbmCompleteBinary.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbmCompleteBinaryActionPerformed(evt);
-            }
-        });
-        jMenu2.add(cbmCompleteBinary);
-
-        cbmDegeneratedBinary.setText("Degenerated binary tree");
-        cbmDegeneratedBinary.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbmMenu(evt);
-            }
-        });
-        jMenu2.add(cbmDegeneratedBinary);
-
-        cbmPerfectBinary.setText("Perfect binary tree");
-        cbmPerfectBinary.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbmMenu(evt);
-            }
-        });
-        jMenu2.add(cbmPerfectBinary);
-
         cbmRootedBinary.setText("Rooted binary tree");
         cbmRootedBinary.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -420,24 +393,12 @@ public class Main extends javax.swing.JFrame {
     private void cbmMenu(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbmMenu
         
         cbmAVLTree.setSelected(false);
-        cbmCompleteBinary.setSelected(false);
-        cbmDegeneratedBinary.setSelected(false);
-        cbmPerfectBinary.setSelected(false);
         cbmRootedBinary.setSelected(false);
         cbmRedblack.setSelected(false);
         
         if (evt.getSource() == cbmAVLTree) {
             cbmAVLTree.setSelected(true);
-            controller.setTreeType(Controller.BALANCED_BINARY_TREE);
-        } else if (evt.getSource() == cbmCompleteBinary) {
-            cbmCompleteBinary.setSelected(true);
-            controller.setTreeType(Controller.COMPLETE_BINARY_TREE);
-        } else if (evt.getSource() == cbmDegeneratedBinary) {
-            cbmDegeneratedBinary.setSelected(true);
-            controller.setTreeType(Controller.DEGENERATE_BINARY_TREE);
-        } else if (evt.getSource() == cbmPerfectBinary) {
-            cbmPerfectBinary.setSelected(true);
-            controller.setTreeType(Controller.PERFECT_BINARY_TREE);
+            controller.setTreeType(Controller.AVL_TREE);
         } else if (evt.getSource() == cbmRootedBinary) {
             cbmRootedBinary.setSelected(true);
             controller.setTreeType(Controller.ROOTED_BINARY_TREE);
@@ -446,10 +407,6 @@ public class Main extends javax.swing.JFrame {
             controller.setTreeType(Controller.RED_BLACK_TREE);
         }
     }//GEN-LAST:event_cbmMenu
-
-    private void cbmCompleteBinaryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbmCompleteBinaryActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbmCompleteBinaryActionPerformed
 
     private void tlValuesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tlValuesMouseClicked
         int row = tlValues.getSelectedRow();
@@ -480,9 +437,6 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JButton btGenerate;
     private javax.swing.JButton btSearch;
     private javax.swing.JCheckBoxMenuItem cbmAVLTree;
-    private javax.swing.JCheckBoxMenuItem cbmCompleteBinary;
-    private javax.swing.JCheckBoxMenuItem cbmDegeneratedBinary;
-    private javax.swing.JCheckBoxMenuItem cbmPerfectBinary;
     private javax.swing.JCheckBoxMenuItem cbmRedblack;
     private javax.swing.JCheckBoxMenuItem cbmRootedBinary;
     private javax.swing.JMenu jMenu1;

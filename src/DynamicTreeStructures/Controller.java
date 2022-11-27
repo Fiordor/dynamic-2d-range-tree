@@ -4,6 +4,7 @@ import DynamicTreeStructures.imagegenerator.Image;
 import DynamicTreeStructures.imagegenerator.ImageTree;
 import DynamicTreeStructures.interfaces.TreeImage;
 import DynamicTreeStructures.interfaces.TreeStructure;
+import DynamicTreeStructures.structure.AVLTree;
 import DynamicTreeStructures.structure.RedBlackTree;
 import DynamicTreeStructures.structure.RootedBinaryTree;
 import java.awt.Color;
@@ -24,7 +25,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Controller {
 
-    public final static int BALANCED_BINARY_TREE = 0;
+    public final static int AVL_TREE = 0;
     public final static int COMPLETE_BINARY_TREE = 1;
     public final static int DEGENERATE_BINARY_TREE = 2;
     public final static int PERFECT_BINARY_TREE = 3;
@@ -74,7 +75,8 @@ public class Controller {
         this.tree = null;
 
         switch (type) {
-            case BALANCED_BINARY_TREE:
+            case AVL_TREE:
+                this.tree = new AVLTree<Integer>();
                 break;
             case COMPLETE_BINARY_TREE:
                 break;
@@ -230,8 +232,8 @@ public class Controller {
 
     private String typeToString() {
         switch (type) {
-            case BALANCED_BINARY_TREE:
-                return "Balanced binary tree";
+            case AVL_TREE:
+                return "AVL tree";
             case COMPLETE_BINARY_TREE:
                 return "Completed binary tree";
             case DEGENERATE_BINARY_TREE:

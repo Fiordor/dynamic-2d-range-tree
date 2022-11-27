@@ -105,30 +105,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbmMenu"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cbmCompleteBinary">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Complete binary tree"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbmCompleteBinaryActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cbmDegeneratedBinary">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Degenerated binary tree"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbmMenu"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cbmPerfectBinary">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Perfect binary tree"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbmMenu"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cbmRootedBinary">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Rooted binary tree"/>
