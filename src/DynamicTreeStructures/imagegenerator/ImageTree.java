@@ -2,6 +2,8 @@ package DynamicTreeStructures.imagegenerator;
 
 import DynamicTreeStructures.interfaces.TreeImage;
 import DynamicTreeStructures.interfaces.TreeStructure;
+import DynamicTreeStructures.structure.AVLTree;
+import DynamicTreeStructures.structure.NodeAVLTree;
 import DynamicTreeStructures.structure.NodeRootedBinaryTree;
 import DynamicTreeStructures.structure.NodeRedBlackTree;
 import DynamicTreeStructures.structure.RedBlackTree;
@@ -45,7 +47,7 @@ public class ImageTree<T, K extends Comparable<K>> implements TreeImage {
     public ImageTree(TreeStructure<T, K> tree, int gapWidth, int gapHeight, Font font) {
         init(font);
 
-        if (tree != null) {
+        if (tree != null && tree.getRoot() != null) {
             List< List<ImageNode>> rawMatrix = new ArrayList<>();
             Class<?> classType = tree.getClass();
             
@@ -53,6 +55,8 @@ public class ImageTree<T, K extends Comparable<K>> implements TreeImage {
                 next(null, (NodeRootedBinaryTree<K>)tree.getRoot(), 0, rawMatrix);
             } else if (classType.equals(RedBlackTree.class)) {
                 next(null, (NodeRedBlackTree<K>)tree.getRoot(), 0, rawMatrix);
+            } else if (classType.equals(AVLTree.class)) {
+                next(null, (NodeAVLTree<K>)tree.getRoot(), 0, rawMatrix);
             }
             
             this.nodeMatrix = toNodeMatrix(rawMatrix);
@@ -252,6 +256,28 @@ public class ImageTree<T, K extends Comparable<K>> implements TreeImage {
             next(node, child.getRight(), deep + 1, matrix);
         }
     }
+    
+    private void next(ImageNode parent, NodeAVLTree<K> child, int deep, List<List<ImageNode>> matrix) {
+
+        if (deep >= matrix.size()) {
+            matrix.add(new ArrayList<>());
+        }
+
+        ImageNode node = parse(child);
+        matrix.get(deep).add(node);
+
+        if (parent != null) {
+            node.parent = parent;
+        }
+
+        if (child.getLeft() != null) {
+            next(node, child.getLeft(), deep + 1, matrix);
+        }
+
+        if (child.getRight() != null) {
+            next(node, child.getRight(), deep + 1, matrix);
+        }
+    }
 
     /**
      * Calculate bounds needs a string into image.
@@ -284,6 +310,18 @@ public class ImageTree<T, K extends Comparable<K>> implements TreeImage {
 
     private ImageNode parse(NodeRedBlackTree<K> node) {
         ImageNode imageNode = new ImageNode(node.getData().toString(), node.isRed() ? Color.RED : Color.BLACK);
+        if (node.getLeft() != null) {
+            imageNode.left = node.getLeft().getData().toString();
+        }
+
+        if (node.getRight() != null) {
+            imageNode.right = node.getRight().getData().toString();
+        }
+        return parse(imageNode);
+    }
+    
+    private ImageNode parse(NodeAVLTree<K> node) {
+        ImageNode imageNode = new ImageNode(node.getData().toString());
         if (node.getLeft() != null) {
             imageNode.left = node.getLeft().getData().toString();
         }

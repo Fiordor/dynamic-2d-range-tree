@@ -214,11 +214,7 @@ public class Controller {
 
     private void print() {
 
-        /*
-        System.out.println(redBlackTree == null
-                ? tree.toString()
-                : redBlackTree.toString());
-         */
+        System.out.println(tree.toString());
         TreeImage treeImage = new ImageTree<>(tree, 16, 16);
 
         try {

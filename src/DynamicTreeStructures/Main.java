@@ -25,8 +25,8 @@ public class Main extends javax.swing.JFrame {
 
         pnCanvas.setBackground(Color.WHITE);
 
-        cbmRootedBinary.setSelected(true);
-        controller = new Controller(pnCanvas, tlValues, lbInfo, Controller.ROOTED_BINARY_TREE);
+        cbmAVLTree.setSelected(true);
+        controller = new Controller(pnCanvas, tlValues, lbInfo, Controller.AVL_TREE);
 
         getContentPane().setBackground(new Color(150, 150, 150));
 

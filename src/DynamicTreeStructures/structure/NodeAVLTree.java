@@ -1,4 +1,3 @@
-
 package DynamicTreeStructures.structure;
 
 /**
@@ -11,14 +10,16 @@ public class NodeAVLTree<K extends Comparable<K>> implements Comparable<NodeAVLT
     private K data;
     private NodeAVLTree<K> left;
     private NodeAVLTree<K> right;
-    
-    private int factor;
+
+    private int deepLeft;
+    private int deepRight;
 
     public NodeAVLTree(K data) {
         this.data = data;
         this.left = null;
         this.right = null;
-        this.factor = 0;
+        this.deepLeft = 0;
+        this.deepRight = 0;
     }
 
     public K getData() {
@@ -45,6 +46,30 @@ public class NodeAVLTree<K extends Comparable<K>> implements Comparable<NodeAVLT
         this.right = right;
     }
     
+    public int getFactor() {
+        return deepLeft - deepRight;
+    }
+    
+    public int getDeep() {
+        return Math.max(deepLeft, deepRight);
+    }
+
+    public int getDeepLeft() {
+        return deepLeft;
+    }
+
+    public void setDeepLeft(int deepLeft) {
+        this.deepLeft = deepLeft;
+    }
+
+    public int getDeepRight() {
+        return deepRight;
+    }
+
+    public void setDeepRight(int deepRight) {
+        this.deepRight = deepRight;
+    }
+
     @Override
     public int compareTo(NodeAVLTree<K> data) {
         return this.data.compareTo(data.getData());
@@ -55,6 +80,6 @@ public class NodeAVLTree<K extends Comparable<K>> implements Comparable<NodeAVLT
         String l = left == null ? "null" : left.getData().toString();
         String d = data.toString();
         String r = right == null ? "null" : right.getData().toString();
-        return String.format("%s;%s;%s", l, d, r);
+        return String.format("%s;%s;%d;%s", l, d, deepLeft - deepRight, r);
     }
 }
