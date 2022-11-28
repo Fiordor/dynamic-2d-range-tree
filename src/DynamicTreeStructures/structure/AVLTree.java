@@ -105,7 +105,7 @@ public class AVLTree<K extends Comparable<K>> implements TreeStructure<NodeAVLTr
         NodeAVLTree<K> left = node.getLeft().getLeft();
         NodeAVLTree<K> right = new NodeAVLTree<>(node.getData());
 
-        rotationNode(node, center.getData(), left, right, left.getDeep() + 1, 0);
+        rotationNode(node, center.getData(), left, right, left.getDeep() + 1, 1);
     }
 
     private void rotationLR(NodeAVLTree<K> node) {
@@ -116,7 +116,7 @@ public class AVLTree<K extends Comparable<K>> implements TreeStructure<NodeAVLTr
         left.setRight(null);
         left.setDeepRight(left.getDeepRight() - 1);
 
-        rotationNode(node, center.getData(), left, right, left.getDeep() + 1, 0);
+        rotationNode(node, center.getData(), left, right, left.getDeep() + 1, 1);
     }
 
     private void rotationRR(NodeAVLTree<K> node) {
@@ -124,7 +124,7 @@ public class AVLTree<K extends Comparable<K>> implements TreeStructure<NodeAVLTr
         NodeAVLTree<K> left = new NodeAVLTree<>(node.getData());
         NodeAVLTree<K> right = node.getRight().getRight();
 
-        rotationNode(node, center.getData(), left, right, 0, right.getDeep() + 1);
+        rotationNode(node, center.getData(), left, right, 1, right.getDeep() + 1);
     }
 
     private void rotationRL(NodeAVLTree<K> node) {
@@ -135,7 +135,7 @@ public class AVLTree<K extends Comparable<K>> implements TreeStructure<NodeAVLTr
         right.setLeft(null);
         right.setDeepLeft(left.getDeepLeft()- 1);
 
-        rotationNode(node, center.getData(), left, right, 0, right.getDeep() + 1);
+        rotationNode(node, center.getData(), left, right, 1, right.getDeep() + 1);
     }
 
     private void rotationNode(NodeAVLTree<K> node, K data, NodeAVLTree<K> left, NodeAVLTree<K> right, int deepLeft, int deepRight) {
@@ -148,13 +148,15 @@ public class AVLTree<K extends Comparable<K>> implements TreeStructure<NodeAVLTr
 
     private void toStringNext(NodeAVLTree<K> node, StringBuilder builder) {
 
+        final char SPLITTER = '\n';
+        
         if (node.getLeft() != null) {
-            builder.append('|').append(node.getLeft().toString());
+            builder.append(SPLITTER).append(node.getLeft().toString());
             toStringNext(node.getLeft(), builder);
         }
 
         if (node.getRight() != null) {
-            builder.append('|').append(node.getRight().toString());
+            builder.append(SPLITTER).append(node.getRight().toString());
             toStringNext(node.getRight(), builder);
         }
     }

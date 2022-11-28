@@ -151,11 +151,13 @@ public class Controller {
         int k = Integer.parseInt(input);
         long totalTime = 0;
         Random r = new Random();
+        
         for (int i = 0; i < k; i++) {
             int random = r.nextInt(k * 10);
 
-            ArrayList<Integer> values = new ArrayList<>(table.getRowCount());
-            for (int j = 0; j < values.size(); j++) {
+            int size = table.getRowCount();
+            ArrayList<Integer> values = new ArrayList<>(size);
+            for (int j = 0; j < size; j++) {
                 values.add(Integer.valueOf(table.getValueAt(j, 1).toString()));
             }
 
@@ -214,6 +216,7 @@ public class Controller {
 
     private void print() {
 
+        System.out.println("===========================================");
         System.out.println(tree.toString());
         TreeImage treeImage = new ImageTree<>(tree, 16, 16);
 

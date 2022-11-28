@@ -50,22 +50,22 @@ public class ImageTree<T, K extends Comparable<K>> implements TreeImage {
         if (tree != null && tree.getRoot() != null) {
             List< List<ImageNode>> rawMatrix = new ArrayList<>();
             Class<?> classType = tree.getClass();
-            
+
             if (classType.equals(RootedBinaryTree.class)) {
-                next(null, (NodeRootedBinaryTree<K>)tree.getRoot(), 0, rawMatrix);
+                next(null, (NodeRootedBinaryTree<K>) tree.getRoot(), 0, rawMatrix);
             } else if (classType.equals(RedBlackTree.class)) {
-                next(null, (NodeRedBlackTree<K>)tree.getRoot(), 0, rawMatrix);
+                next(null, (NodeRedBlackTree<K>) tree.getRoot(), 0, rawMatrix);
             } else if (classType.equals(AVLTree.class)) {
-                next(null, (NodeAVLTree<K>)tree.getRoot(), 0, rawMatrix);
+                next(null, (NodeAVLTree<K>) tree.getRoot(), 0, rawMatrix);
             }
-            
+
             this.nodeMatrix = toNodeMatrix(rawMatrix);
             assign(gapWidth, gapHeight);
         } else {
             nodeMatrix = null;
         }
     }
-    
+
     @Override
     public Font getFont() {
         return font;
@@ -256,7 +256,7 @@ public class ImageTree<T, K extends Comparable<K>> implements TreeImage {
             next(node, child.getRight(), deep + 1, matrix);
         }
     }
-    
+
     private void next(ImageNode parent, NodeAVLTree<K> child, int deep, List<List<ImageNode>> matrix) {
 
         if (deep >= matrix.size()) {
@@ -319,9 +319,18 @@ public class ImageTree<T, K extends Comparable<K>> implements TreeImage {
         }
         return parse(imageNode);
     }
-    
+
     private ImageNode parse(NodeAVLTree<K> node) {
         ImageNode imageNode = new ImageNode(node.getData().toString());
+        int factor = node.getFactor();
+        if (factor > 1) {
+            imageNode.c = new Color(0,0,255);
+        } else if (factor < -1) {
+            imageNode.c = new Color(255,0,0);
+        } else {
+            imageNode.c = new Color(0, 0, 0);
+        }
+
         if (node.getLeft() != null) {
             imageNode.left = node.getLeft().getData().toString();
         }
