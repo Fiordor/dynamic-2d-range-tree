@@ -1,6 +1,7 @@
 package DynamicTreeStructures.structure;
 
 import DynamicTreeStructures.interfaces.TreeStructure;
+import java.util.ArrayList;
 
 /**
  *
@@ -80,7 +81,49 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 
     @Override
     public String toString() {
-        return null;
+        return toString(false);
+    }
+
+    @Override
+    public String toString(boolean formated) {
+        
+        if (root == null) {
+            return null;
+        } else {
+
+            NodeRedBlackTree<K>[] nodes = toArray();
+            StringBuilder builder = new StringBuilder();
+
+            if (formated) {
+
+                int max = 4;
+                for (int i = 0; i < nodes.length; i++) {
+                    String value = nodes[i].getData().toString();
+                    if (value.length() > max) {
+                        max = value.length();
+                    }
+                }
+
+                String format = "%" + max + "s;%" + max + "s;%" + max + "s;%" + max + "s";
+
+                for (int i = 0; i < nodes.length; i++) {
+                    String v = nodes[i].getData().toString();
+                    String c = nodes[i].isRed() ? "r" : "b";
+                    String l = nodes[i].getLeft() != null ? nodes[i].getLeft().getData().toString() : "null";
+                    String r = nodes[i].getRight() != null ? nodes[i].getRight().getData().toString() : "null";
+                    builder.append(String.format(format, v, c, l, r)).append('\n');
+                }
+                builder.deleteCharAt(builder.length() - 1);
+
+            } else {
+
+                for (int i = 0; i < nodes.length; i++) {
+                    builder.append(nodes[i].toString()).append('\n');
+                }
+                builder.deleteCharAt(builder.length() - 1);
+            }
+            return builder.toString();
+        }
     }
 
     /**
@@ -241,8 +284,34 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
         return newRoot;
     }
 
-    @Override
-    public String toString(boolean formated) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    private NodeRedBlackTree<K>[] toArray() {
+
+        if (this.root == null) {
+            return new NodeRedBlackTree[0];
+        }
+
+        ArrayList<NodeRedBlackTree<K>> list = new ArrayList<>();
+        list.add(this.root);
+        toArrayNext(root, list);
+
+        NodeRedBlackTree<K>[] array = new NodeRedBlackTree[list.size()];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = list.get(i);
+        }
+
+        return array;
+    }
+
+    private void toArrayNext(NodeRedBlackTree<K> node, ArrayList<NodeRedBlackTree<K>> list) {
+
+        if (node.getLeft() != null) {
+            list.add(node.getLeft());
+            toArrayNext(node.getLeft(), list);
+        }
+
+        if (node.getRight() != null) {
+            list.add(node.getRight());
+            toArrayNext(node.getRight(), list);
+        }
     }
 }

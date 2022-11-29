@@ -70,6 +70,6 @@ public class NodeRedBlackTree<K extends Comparable<K>> implements Comparable<Nod
         String d = data.toString();
         String c = isRed ? "red" : "black";
         String r = right == null ? "null" : right.data.toString();
-        return String.format("[%s,%s,%s,%s]", l, d, c, r);
+        return String.format("%s;%s;%s;%s", d, c, l, r);
     }
 }
