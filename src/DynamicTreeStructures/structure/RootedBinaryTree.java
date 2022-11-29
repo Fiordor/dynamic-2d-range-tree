@@ -99,4 +99,9 @@ public class RootedBinaryTree<K extends Comparable<K>> implements TreeStructure<
             toStringNext(node.getRight(), builder);
         }
     }
+
+    @Override
+    public String toString(boolean formated) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

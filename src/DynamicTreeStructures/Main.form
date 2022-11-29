@@ -169,7 +169,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btGenerate" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="lbInfo" max="32767" attributes="0"/>
+                      <Component id="lbInfo" pref="166" max="32767" attributes="0"/>
                   </Group>
                   <Component id="pnCanvas" max="32767" attributes="0"/>
               </Group>
@@ -306,7 +306,7 @@
               <Table columnCount="3" rowCount="0">
                 <Column editable="false" title="#" type="java.lang.Integer"/>
                 <Column editable="false" title="Value" type="java.lang.String"/>
-                <Column editable="false" title="(ns)" type="java.lang.Long"/>
+                <Column editable="false" title="(ms)" type="java.lang.Double"/>
               </Table>
             </Property>
           </Properties>

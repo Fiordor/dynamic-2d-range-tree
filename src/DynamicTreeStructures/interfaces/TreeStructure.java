@@ -21,4 +21,6 @@ public interface TreeStructure< T, K extends Comparable<K> >  {
     public K search(K data);
     
     public K delete(K data);
+    
+    public String toString(boolean formated);
 }

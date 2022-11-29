@@ -106,10 +106,11 @@ public class Controller {
         long start = System.nanoTime();
         tree.insert(value);
         long fin = System.nanoTime();
+        double ms = (fin - start) / 1000000.0;
 
-        table.addRow(new Object[]{table.getRowCount() + 1, input, (fin - start)});
+        table.addRow(new Object[]{table.getRowCount() + 1, input, ms});
 
-        label.setText(String.format("Insert %d: %d ns", value, fin - start));
+        label.setText(String.format("Insert %d: %.6f ms", value, ms));
         print();
     }
 
@@ -132,7 +133,7 @@ public class Controller {
         tree.search(value);
         long fin = System.nanoTime();
 
-        label.setText(String.format("Search %d: %d ns", value, fin - start));
+        label.setText(String.format("Search %d: %d ms", value, fin - start));
         print();
     }
 
@@ -149,8 +150,12 @@ public class Controller {
             return;
         }
         int k = Integer.parseInt(input);
-        long totalTime = 0;
-        Random r = new Random();
+        double totalTime = 0.0;
+        //long seed = Math.abs(new Random().nextInt());
+        long seed = 976441334;
+        System.out.printf("==============================\n");
+        System.out.printf("Seed: %d\n", seed);
+        Random r = new Random(seed);
         
         for (int i = 0; i < k; i++) {
             int random = r.nextInt(k * 10);
@@ -168,12 +173,12 @@ public class Controller {
             long start = System.nanoTime();
             tree.insert(random);
             long fin = System.nanoTime();
-
-            table.addRow(new Object[]{table.getRowCount() + 1, random, (fin - start)});
-            totalTime += (fin - start);
+            double ms = (fin - start) / 1000000.0;
+            table.addRow(new Object[]{table.getRowCount() + 1, random, ms});
+            totalTime += ms;
         }
 
-        label.setText(String.format("Generate %d: %d ns", k, totalTime));
+        label.setText(String.format("Generate %d: %.6f ms", k, totalTime));
         print();
     }
 
@@ -216,8 +221,7 @@ public class Controller {
 
     private void print() {
 
-        System.out.println("===========================================");
-        System.out.println(tree.toString());
+        System.out.println(tree.toString(true));
         TreeImage treeImage = new ImageTree<>(tree, 16, 16);
 
         try {

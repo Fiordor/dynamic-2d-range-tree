@@ -240,4 +240,9 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
         newRoot.setLeft(oldRoot);
         return newRoot;
     }
+
+    @Override
+    public String toString(boolean formated) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

@@ -323,8 +323,12 @@ public class ImageTree<T, K extends Comparable<K>> implements TreeImage {
     private ImageNode parse(NodeAVLTree<K> node) {
         ImageNode imageNode = new ImageNode(node.getData().toString());
         int factor = node.getFactor();
-        if (factor > 1) {
-            imageNode.c = new Color(0,0,255);
+        if (factor == 1) {
+            imageNode.c = new Color(0,0,200);
+        } else if (factor > 1) {
+            imageNode.c = new Color(0,0,250);
+        } else if (factor == -1) {
+            imageNode.c = new Color(200,0,0);
         } else if (factor < -1) {
             imageNode.c = new Color(255,0,0);
         } else {

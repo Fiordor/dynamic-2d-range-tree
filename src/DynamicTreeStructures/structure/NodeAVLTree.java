@@ -80,6 +80,6 @@ public class NodeAVLTree<K extends Comparable<K>> implements Comparable<NodeAVLT
         String l = left == null ? "null" : left.getData().toString();
         String d = data.toString();
         String r = right == null ? "null" : right.getData().toString();
-        return String.format("%s;%s;%d;%s", l, d, deepLeft - deepRight, r);
+        return String.format("%s;%d;%s;%s", d, deepLeft - deepRight, l, r);
     }
 }

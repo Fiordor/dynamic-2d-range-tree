@@ -1,6 +1,7 @@
 package DynamicTreeStructures.structure;
 
 import DynamicTreeStructures.interfaces.TreeStructure;
+import java.util.ArrayList;
 
 /**
  *
@@ -46,13 +47,48 @@ public class AVLTree<K extends Comparable<K>> implements TreeStructure<NodeAVLTr
 
     @Override
     public String toString() {
+        return toString(false);
+    }
+
+    public String toString(boolean formated) {
 
         if (root == null) {
             return null;
         } else {
+            
+            NodeAVLTree<K>[] nodes = toArray();
             StringBuilder builder = new StringBuilder();
-            builder.append(root.toString());
-            toStringNext(root, builder);
+            
+            if (formated) {
+                
+                int max = 4;
+                for (int i = 0; i < nodes.length; i++) {
+                    String value = nodes[i].getData().toString();
+                    if (value.length() > max) {
+                        max = value.length();
+                    }
+                }
+                
+                String format = "%" + max + "s;%" + max + "d;%" + max + "d;%" + max + "d;%" + max + "s;%" + max + "s";
+                
+                for (int i = 0; i < nodes.length; i++) {
+                    String v = nodes[i].getData().toString();
+                    int f = nodes[i].getFactor();
+                    int deepL = nodes[i].getDeepLeft();
+                    int deepR = nodes[i].getDeepRight();
+                    String l = nodes[i].getLeft() != null ? nodes[i].getLeft().getData().toString() : "null";
+                    String r = nodes[i].getRight()!= null ? nodes[i].getRight().getData().toString() : "null";
+                    builder.append(String.format(format, v, f, deepL, deepR, l, r)).append('\n');
+                }
+                builder.deleteCharAt(builder.length() - 1);
+                
+            } else {
+                
+                for (int i = 0; i < nodes.length; i++) {
+                    builder.append(nodes[i].toString()).append('\n');
+                }
+                builder.deleteCharAt(builder.length() - 1);
+            }
             return builder.toString();
         }
     }
@@ -66,7 +102,7 @@ public class AVLTree<K extends Comparable<K>> implements TreeStructure<NodeAVLTr
             } else {
                 insert(node.getLeft(), data);
             }
-            node.setDeepLeft(node.getDeepLeft() + 1);
+            node.setDeepLeft(node.getLeft().getDeepLeft() + 1);
         } else {
 
             if (node.getRight() == null) {
@@ -74,7 +110,7 @@ public class AVLTree<K extends Comparable<K>> implements TreeStructure<NodeAVLTr
             } else {
                 insert(node.getRight(), data);
             }
-            node.setDeepRight(node.getDeepRight() + 1);
+            node.setDeepRight(node.getRight().getDeepRight() + 1);
         }
 
         if (Math.abs(node.getFactor()) > 1) {
@@ -114,7 +150,7 @@ public class AVLTree<K extends Comparable<K>> implements TreeStructure<NodeAVLTr
         NodeAVLTree<K> right = new NodeAVLTree<>(node.getData());
 
         left.setRight(null);
-        left.setDeepRight(left.getDeepRight() - 1);
+        left.setDeepRight(0);
 
         rotationNode(node, center.getData(), left, right, left.getDeep() + 1, 1);
     }
@@ -133,7 +169,7 @@ public class AVLTree<K extends Comparable<K>> implements TreeStructure<NodeAVLTr
         NodeAVLTree<K> right = node.getRight();
 
         right.setLeft(null);
-        right.setDeepLeft(left.getDeepLeft()- 1);
+        right.setDeepLeft(0);
 
         rotationNode(node, center.getData(), left, right, 1, right.getDeep() + 1);
     }
@@ -146,18 +182,34 @@ public class AVLTree<K extends Comparable<K>> implements TreeStructure<NodeAVLTr
         node.setDeepRight(deepRight);
     }
 
-    private void toStringNext(NodeAVLTree<K> node, StringBuilder builder) {
-
-        final char SPLITTER = '\n';
+    private NodeAVLTree<K>[] toArray() {
         
+        if (this.root == null) {
+            return new NodeAVLTree[0];
+        }
+        
+        ArrayList<NodeAVLTree<K>> list = new ArrayList<>();
+        list.add(this.root);
+        toArrayNext(root, list);
+        
+        NodeAVLTree<K>[] array = new NodeAVLTree[list.size()];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = list.get(i);
+        }
+        
+        return array;
+    }
+    
+    private void toArrayNext(NodeAVLTree<K> node, ArrayList<NodeAVLTree<K>> list) {
+
         if (node.getLeft() != null) {
-            builder.append(SPLITTER).append(node.getLeft().toString());
-            toStringNext(node.getLeft(), builder);
+            list.add(node.getLeft());
+            toArrayNext(node.getLeft(), list);
         }
 
         if (node.getRight() != null) {
-            builder.append(SPLITTER).append(node.getRight().toString());
-            toStringNext(node.getRight(), builder);
+            list.add(node.getRight());
+            toArrayNext(node.getRight(), list);
         }
     }
 }
