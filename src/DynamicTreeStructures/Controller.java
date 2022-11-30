@@ -110,6 +110,7 @@ public class Controller {
 
         table.addRow(new Object[]{table.getRowCount() + 1, input, ms});
 
+        System.out.printf("Insert: %d\n", value);
         label.setText(String.format("Insert %d: %.6f ms", value, ms));
         print();
     }
