@@ -124,18 +124,24 @@ public class AVLTree<K extends Comparable<K>> implements TreeStructure<NodeAVLTr
 
             if (factor > 1) {
                 NodeAVLTree<K> left = node.getLeft();
-
-                if (left.getLeft() != null && insertLeft) {
+                int insert = data.compareTo(left.getData());
+                System.out.printf("l insert %d ", insert);
+                if (left.getLeft() != null && insert < 0) {
+                    System.out.println("rotationLL");
                     rotationLL(node);
-                } else if (left.getRight() != null && !insertLeft) {
+                } else if (left.getRight() != null && insert > 0) {
+                    System.out.println("rotationLR");
                     rotationLR(node);
                 }
             } else if (factor < -1) {
                 NodeAVLTree<K> right = node.getRight();
-
-                if (right.getLeft() != null && insertLeft) {
+                int insert = data.compareTo(right.getData());
+                System.out.printf("r insert %d ", insert);
+                if (right.getLeft() != null && insert < 0) {
+                    System.out.println("rotationRL");
                     rotationRL(node);
-                } else if (right.getRight() != null && !insertLeft) {
+                } else if (right.getRight() != null && insert > 0) {
+                    System.out.println("rotationRR");
                     rotationRR(node);
                 }
             }
@@ -168,10 +174,31 @@ public class AVLTree<K extends Comparable<K>> implements TreeStructure<NodeAVLTr
         NodeAVLTree<K> left = node.getLeft();
         NodeAVLTree<K> right = new NodeAVLTree<>(node.getData());
 
-        left.setRight(null);
-        left.setDeepRight(0);
+        if (center.getLeft() != null) {
+            left.setRight(center.getLeft());
+            left.setDeepRight(center.getLeft().getDeep() + 1);
+        } else {
+            left.setRight(null);
+            left.setDeepRight(0);
+        }
 
-        rotationNode(node, center.getData(), left, right, left.getDeep() + 1, 1);
+        if (center.getRight() != null) {
+            right.setLeft(center.getRight());
+            right.setDeepLeft(center.getDeepRight() + 1);
+        } else {
+            right.setLeft(null);
+            right.setDeepLeft(0);
+        }
+
+        if (node.getRight() != null) {
+            right.setRight(node.getRight());
+            right.setDeepRight(node.getRight().getDeep() + 1);
+        } else {
+            right.setRight(null);
+            right.setDeepRight(0);
+        }
+
+        rotationNode(node, center.getData(), left, right, left.getDeep() + 1, right.getDeep() + 1);
     }
 
     private void rotationRR(NodeAVLTree<K> node) {
@@ -179,12 +206,12 @@ public class AVLTree<K extends Comparable<K>> implements TreeStructure<NodeAVLTr
         NodeAVLTree<K> left = new NodeAVLTree<>(node.getData());
         NodeAVLTree<K> right = node.getRight().getRight();
 
-        if (node.getLeft()!= null) {
+        if (node.getLeft() != null) {
             left.setLeft(node.getLeft());
             left.setDeepLeft(node.getLeft().getDeep() + 1);
         }
 
-        if (right.getLeft()!= null) {
+        if (right.getLeft() != null) {
             left.setRight(right.getLeft());
             left.setDeepRight(right.getLeft().getDeep() + 1);
         }
@@ -198,8 +225,29 @@ public class AVLTree<K extends Comparable<K>> implements TreeStructure<NodeAVLTr
         NodeAVLTree<K> left = new NodeAVLTree<>(node.getData());
         NodeAVLTree<K> right = node.getRight();
 
-        right.setLeft(null);
-        right.setDeepLeft(0);
+        if (center.getLeft() != null) {
+            left.setRight(center.getLeft());
+            left.setDeepRight(center.getLeft().getDeep() + 1);
+        } else {
+            left.setRight(null);
+            left.setDeepRight(0);
+        }
+
+        if (center.getRight() != null) {
+            right.setLeft(center.getRight());
+            right.setDeepLeft(center.getDeepRight() + 1);
+        } else {
+            right.setLeft(null);
+            right.setDeepLeft(0);
+        }
+
+        if (node.getLeft() != null) {
+            left.setLeft(node.getLeft());
+            left.setDeepLeft(node.getLeft().getDeep() + 1);
+        } else {
+            left.setLeft(null);
+            left.setDeepLeft(0);
+        }
 
         rotationNode(node, center.getData(), left, right, 1, right.getDeep() + 1);
     }
