@@ -1,7 +1,10 @@
 package DynamicTreeStructures.structure;
 
-import DynamicTreeStructures.interfaces.TreeStructure;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+
+import DynamicTreeStructures.interfaces.TreeStructure;
 
 /**
  *
@@ -79,6 +82,12 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
         return null;
     }
 
+    /**
+     * Provides a String representation of the tree,
+     * in pre-order, where each node appears in a new line.
+     * It uses the toString() method of the node type K to print it.
+     * @return The string representing this tree
+     */
     @Override
     public String toString() {
         return toString(false);
@@ -124,6 +133,33 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
             }
             return builder.toString();
         }
+    }
+    
+    /**
+     * Returns a RedBlackTree<Integer> made from the toString() unformatted description of a RBTree.
+     * @param s the string
+     * @return The corresponding RedBlackTree<K>
+     */
+    public static RedBlackTree<Integer> fromString(String s) {
+    	String[] lines = s.split("\\R+");
+    	Iterator<String> linesIt = Arrays.asList(lines).iterator();
+    	NodeRedBlackTree<Integer> root = parseRecursive(linesIt);
+    	RedBlackTree<Integer> rbt = new RedBlackTree<>();
+    	rbt.root = root;
+    	return rbt;
+    }
+    
+    private static NodeRedBlackTree<Integer> parseRecursive(Iterator<String> linesIt) {
+    	String[] parts = linesIt.next().strip().split(";");
+    	NodeRedBlackTree<Integer> node = new NodeRedBlackTree<Integer>(Integer.parseInt(parts[0]));
+    	node.setRed(parts[1].equals("red"));
+    	if (!parts[2].equals("null")) {
+    		node.setLeft(parseRecursive(linesIt));
+    	}
+    	if (!parts[3].equals("null")) {
+    		node.setRight(parseRecursive(linesIt));
+    	}
+    	return node;
     }
 
     /**
