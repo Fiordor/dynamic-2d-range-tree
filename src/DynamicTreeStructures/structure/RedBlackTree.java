@@ -143,9 +143,12 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
     public static RedBlackTree<Integer> fromString(String s) {
     	String[] lines = s.split("\\R+");
     	Iterator<String> linesIt = Arrays.asList(lines).iterator();
-    	NodeRedBlackTree<Integer> root = parseRecursive(linesIt);
+    	
     	RedBlackTree<Integer> rbt = new RedBlackTree<>();
-    	rbt.root = root;
+    	if (linesIt.hasNext()) {
+    		NodeRedBlackTree<Integer> root = parseRecursive(linesIt);
+    		rbt.root = root;
+    	}
     	return rbt;
     }
     
