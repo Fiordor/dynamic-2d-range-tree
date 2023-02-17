@@ -21,6 +21,11 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 
     public RedBlackTree(K k) {
         this.root = new NodeRedBlackTree<>(k);
+        this.root.setRed(false);
+    }
+    
+    protected RedBlackTree(NodeRedBlackTree<K> root) {
+    	this.root = root;
     }
 
     /**

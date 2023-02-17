@@ -1,0 +1,5 @@
+\begin{tikzpicture}
+	\begin{pgfonlayer}{nodelayer}
+		\node [style=BlackNode] (0) at (0, 1) {1};
+	\end{pgfonlayer}
+\end{tikzpicture}
