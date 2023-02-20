@@ -2,6 +2,7 @@ package DynamicTreeStructures.structure;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import DynamicTreeStructures.interfaces.TreeStructure;
@@ -68,7 +69,7 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
      * like binary seach. If exists return true, if not, return false.
      *
      * @param data value to search
-     * @return if the search has been success
+     * @return the data if the search has been successful, or null otherwise
      */
     @Override
     public K search(K data) {
@@ -138,6 +139,28 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
             }
             return builder.toString();
         }
+    }
+    
+    /**
+     * Returns the set represented by the RedBlackTree. Used for stateful testing.
+     * @return A HashSet<K> containing all the values of this tree
+     */
+    public HashSet<K> toSet() {
+    	HashSet<K> set = new HashSet<>();
+    	if (root == null) return set;
+    	toSet(set, root);
+    	return set;
+    }
+    /**
+     * Recursive method to traverse the tree and make a set.
+     * @param set reference to the set to be filled.
+     * @param root the current node
+     */
+    private void toSet(HashSet<K> set, NodeRedBlackTree<K> root) {
+    	if (root == null) return; //Null leaf base case
+    	set.add(root.getData());
+    	toSet(set, root.getLeft());
+    	toSet(set, root.getRight());
     }
     
     /**
@@ -215,7 +238,7 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
         //If the tree is empty (leaf), create the node
         if (node == null) {
             return new NodeRedBlackTree<>(data);
-        }
+    	}
         //Else, we shall insert in one of the children.
         //First, check if the current node is a 4-node (split on the way down)
         if (node.getRight() != null && node.getLeft() != null
