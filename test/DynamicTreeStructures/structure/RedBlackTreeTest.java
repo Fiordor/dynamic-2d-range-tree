@@ -14,6 +14,24 @@ public class RedBlackTreeTest {
 
 	public static String TestTreesFolder = "./test/DynamicTreeStructures/structure/TestTrees/";
 	
+	@Test
+	public void testDeleteN1() {
+		RedBlackTree<Integer> rbt = new RedBlackTree<>();
+		rbt.insert(1);
+		rbt.insert(2);
+		rbt.insert(0);
+		rbt.insert(4);
+		rbt.insert(5);
+		rbt.insert(3);
+		rbt.deleteMin();
+		rbt.insert(0);
+		rbt.insert(-1);
+		rbt.insert(0);
+		rbt.insert(0);
+		rbt.deleteMin();
+		System.out.println(rbt);
+	}
+	
     @Test
     public void testBasic() {
         RedBlackTree<Integer> rbt = new RedBlackTree<>();

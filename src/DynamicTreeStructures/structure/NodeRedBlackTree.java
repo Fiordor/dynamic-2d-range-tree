@@ -58,6 +58,17 @@ public class NodeRedBlackTree<K extends Comparable<K>> implements Comparable<Nod
     public void setRed(boolean isRed) {
         this.isRed = isRed;
     }
+    
+    /**
+     * Swaps the data of this node with another. Used for rotations (deletions).
+     * Does not change the color of the nodes.
+     * @param other
+     */
+    public void swapData(NodeRedBlackTree<K> other) {
+    	K otherData = other.data;
+    	other.data = this.data;
+    	this.data = otherData;
+    }
 
     @Override
     public int compareTo(NodeRedBlackTree<K> k) {
