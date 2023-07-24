@@ -15,6 +15,7 @@ import java.awt.image.ImagingOpException;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -113,6 +114,16 @@ public class Controller {
         System.out.printf("Insert: %d\n", value);
         label.setText(String.format("Insert %d: %.6f ms", value, ms));
         print();
+    }
+    
+    public void addAll(String input) {
+    	if (input.length() == 0) return;
+    	try {
+    	tree = RedBlackTree.fromString(input);
+    	print();
+    	} catch (Exception e) {
+    		JOptionPane.showMessageDialog(canvas, e.getMessage(), "Format error", JOptionPane.ERROR_MESSAGE);
+    	}
     }
 
     public void clearData() {

@@ -5,6 +5,16 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import javax.swing.UIManager;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.AbstractAction;
+import java.awt.event.ActionEvent;
+import javax.swing.Action;
+import javax.swing.JDialog;
 
 /**
  *
@@ -26,6 +36,12 @@ public class Main extends javax.swing.JFrame {
         pnCanvas.setBackground(Color.WHITE);
 
         cbmAVLTree.setSelected(true);
+        
+        mntmAddFullTree = new JMenuItem("Add full tree...");
+        mntmAddFullTree.setAction(action);
+        jMenuBar1.add(mntmAddFullTree);
+        treeDialog = new TreeDialog(this);
+        treeDialog.pack();
         controller = new Controller(pnCanvas, tlValues, lbInfo, Controller.AVL_TREE);
 
         getContentPane().setBackground(new Color(150, 150, 150));
@@ -455,5 +471,22 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JPanel pnCanvas;
     private javax.swing.JTextField tfInput;
     private javax.swing.JTable tlValues;
+    private JMenuItem mntmAddFullTree;
+    private final Action action = new SwingAction();
+    private TreeDialog treeDialog;
     // End of variables declaration//GEN-END:variables
+	private class SwingAction extends AbstractAction {
+		public SwingAction() {
+			putValue(NAME, "SwingAction");
+			putValue(SHORT_DESCRIPTION, "Some short description");
+		}
+		public void actionPerformed(ActionEvent e) {
+			treeDialog.setLocationRelativeTo(pnCanvas);
+			treeDialog.setVisible(true);
+			String treeText = treeDialog.textTree;
+			if (!treeText.equals("")) {
+				controller.addAll(treeText);
+			}
+		}
+	}
 }
