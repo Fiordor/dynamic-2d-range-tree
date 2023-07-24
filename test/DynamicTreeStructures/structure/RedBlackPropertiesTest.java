@@ -135,6 +135,7 @@ public class RedBlackPropertiesTest {
 			boolean b = checkTreeStructure(rbt);
 			if (!b)
 				System.err.println(rbt);
+			return b;
 		} catch (Exception e) {
 			System.err.println("Exception printing rbt");
 		}
@@ -159,6 +160,7 @@ public class RedBlackPropertiesTest {
 			boolean b = checkTreeStructure(rbt);
 			if (!b)
 				System.err.println(rbt);
+			return b;
 		} catch (Exception e) {
 			System.err.println("Exception printing rbt");
 		}

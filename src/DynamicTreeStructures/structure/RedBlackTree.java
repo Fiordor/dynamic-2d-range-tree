@@ -231,11 +231,12 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 	private static NodeRedBlackTree<Integer> parseRecursive(Iterator<String> linesIt) {
 		String[] parts = linesIt.next().strip().split(";");
 		NodeRedBlackTree<Integer> node = new NodeRedBlackTree<Integer>(Integer.parseInt(parts[0]));
-		node.setRed(parts[1].equals("red"));
-		if (!parts[2].equals("null")) {
+		String color = parts[1].strip();
+		node.setRed(color.equals("red") || color.equals("r"));
+		if (!parts[2].strip().equals("null")) {
 			node.setLeft(parseRecursive(linesIt));
 		}
-		if (!parts[3].equals("null")) {
+		if (!parts[3].strip().equals("null")) {
 			node.setRight(parseRecursive(linesIt));
 		}
 		return node;
@@ -440,8 +441,8 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 	 *                       instead it is kept by the parent.
 	 * @return [left_node, node_without_left]
 	 */
-	private List<NodeRedBlackTree<K>> extractLeft234(NodeRedBlackTree<K> root, boolean leftKeepsRight) {
-		List<NodeRedBlackTree<K>> ret = new ArrayList<NodeRedBlackTree<K>>(2);
+	private ArrayList<NodeRedBlackTree<K>> extractLeft234(NodeRedBlackTree<K> root, boolean leftKeepsRight) {
+		ArrayList<NodeRedBlackTree<K>> ret = new ArrayList<NodeRedBlackTree<K>>(2);
 		if (root == null) {
 			throw new RuntimeException("Tried to extract left (2-3-4 method) in a null node");
 		}
@@ -517,7 +518,7 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 	/**
 	 * Merges the given three RBT nodes into a 2-3-4 node. The middle node should
 	 * not have left and right children, since they will be lost (the children of
-	 * left and right will be used).
+	 * left and right will be used). The colors are set accordingly.
 	 */
 	private NodeRedBlackTree<K> mergeNodes234(NodeRedBlackTree<K> left, NodeRedBlackTree<K> middle,
 			NodeRedBlackTree<K> right) {
@@ -527,6 +528,28 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 		left.setRed(true);
 		right.setRed(true);
 		return middle;
+	}
+	
+	/**
+	 * Merges the left or right part of the parent 2-3-4 node with the left-most
+	 * or right-most children.
+	 * @param parent the root of the parent 2-3-4 tree.
+	 * @param leftChild if we should merge with the left-most children or the right-most ones.
+	 * @return the root of the parent after the merging operation.
+	 */
+	private NodeRedBlackTree<K> mergeWithParent(NodeRedBlackTree<K> parent, boolean leftChild) {
+		if (leftChild) {
+			NodeRedBlackTree<K> firstChild = leftNode234(parent);
+			NodeRedBlackTree<K> secondChild = secondNode234(parent);
+			List<NodeRedBlackTree<K>> splitParent = extractLeft234(parent, false);
+			NodeRedBlackTree<K> leftParent = splitParent.get(0);
+			NodeRedBlackTree<K> remainingParent = splitParent.get(1);
+			NodeRedBlackTree<K> mergedChild = mergeNodes234(firstChild, leftParent, secondChild);
+			setLeftChild234(remainingParent, mergedChild);
+			return remainingParent;
+		} else {
+			return parent;
+		}
 	}
 
 	/**
@@ -567,9 +590,18 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 		}
 	}
 	
+	/**
+	 * Deletes the minimum node in the 2-3-4 tree of root. Returns the new tree root,
+	 * and includes the deleted value in result. If the tree is empty, the result is null.
+	 * @param root
+	 * @param result
+	 * @return
+	 */
 	private NodeRedBlackTree<K> deleteMinRec234Launch(NodeRedBlackTree<K> root, Wrapper<K> result) {
 		if (root == null)
+			//result has not been set, so it is null
 			return null;
+		//We check if there is any 2-3-4 node to the left of root
 		NodeRedBlackTree<K> leftParent = leftNode234(root);
 		if (leftParent == null) {
 			// Only the root 2-3-4 node exists
@@ -592,12 +624,14 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 				return root;
 			}
 		} else {
-			// Check rebalancing when there is no grandparent
+			//There exists a second level on the tree. We need to check the special
+			//rebalancing condition that could be needed at the root.
+			//The root can be a 2-node. The problem is its left child.
 			if (is2Node(leftParent)) {
 				//We need rebalancing
 				if (is2Node(root)) {
 					//Perform edge case for the rebalancing (root is 2-node)
-					NodeRedBlackTree<K> sibling = root.getRight();
+					NodeRedBlackTree<K> sibling = root.getRight(); //remember root is 2-node
 					if (is2Node(sibling)) {// Merge the three top nodes
 						root = mergeNodes234(leftParent, root, sibling);
 						// The tree has shrunk in size. We should re-start the algorithm
@@ -605,29 +639,44 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 						return deleteMinRec234Launch(root, result);
 					} else {
 						// Borrow from the sibling
-						List<NodeRedBlackTree<K>> extractSibling = extractLeft234(sibling, false);
-						NodeRedBlackTree<K> newRoot = extractSibling.get(0);
+						ArrayList<NodeRedBlackTree<K>> extractSibling = extractLeft234(sibling, false);
+						NodeRedBlackTree<K> siblingLeft = extractSibling.get(0);
 						NodeRedBlackTree<K> newSibling = extractSibling.get(1);
 						// Build 234 node for the left.
 						// The current root will be the root of the left 234 node.
-						root.setLeft(leftParent);
+						//root.setLeft(leftParent);
 						leftParent.setRed(true);
 						// Move the subtree of the left part of the sibling to the right part of the
 						// left node
-						root.setRight(newRoot.getLeft());
-						newRoot.setLeft(root);
-						newRoot.setRed(false);
-						newRoot.setRight(newSibling);
+						root.setRight(siblingLeft.getLeft());
+						siblingLeft.setLeft(root);
+						siblingLeft.setRed(false);
+						siblingLeft.setRight(newSibling);
 						// fix our pointers
 						leftParent = root;
-						root = newRoot;
+						root = siblingLeft;
 					}
 				} else {
 					//Normal rebalancing without grandparent
-					root = rebalance2Node234(root, leftParent);
+					NodeRedBlackTree<K> leftParentParent = null;
+					NodeRedBlackTree<K> rightSibling = null;
+					NodeRedBlackTree<K> leftRoot = root.getLeft();
+					NodeRedBlackTree<K> rightRoot = root.getRight();
+					rightSibling = secondNode234(root);
+					if (is2Node(rightSibling)) {
+						ArrayList<NodeRedBlackTree<K>> parts = extractLeft234(root, true);
+						NodeRedBlackTree<K> leftPart = parts.get(0);
+						NodeRedBlackTree<K> newRoot = parts.get(1);
+						newRoot.setLeft(mergeNodes234(leftParent, leftPart, rightSibling));
+						root = newRoot;
+					} else {
+						root = leftNodeBorrowFromRight234Node(leftParent, root, rightSibling);
+					}
+					//root = rebalance2Node234(root, leftParent);
 				}
-			}
-			// Perform deletion
+			} 
+			//End of 2-node special invariant check
+			//Perform deletion
 			return deleteMinRec234(root, result);
 		}
 	}
@@ -666,11 +715,56 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 			return grandParent;
 		}
 	}
-
+	
+	/**
+	 * leftChild borrows from rightSibling a key. The left-most key of root becomes the
+	 * rbt-parent of leftChild, and the left-most key of rightSibling substitutes root.
+	 * @param leftChild
+	 * @param root
+	 * @param rightSibling
+	 * @return the new root.
+	 */
+	private NodeRedBlackTree<K> leftNodeBorrowFromRight234Node(NodeRedBlackTree<K> leftChild, 
+			NodeRedBlackTree<K> root, NodeRedBlackTree<K> rightSibling) {
+		
+		ArrayList<NodeRedBlackTree<K>> leftPartRoot = extractLeft234(root, true);
+		NodeRedBlackTree<K> lca = leftPartRoot.get(0);
+		NodeRedBlackTree<K> newRoot = leftPartRoot.get(1);
+		
+		ArrayList<NodeRedBlackTree<K>> leftPartSibling = extractLeft234(rightSibling, false);
+		NodeRedBlackTree<K> leftNodeSibling = leftPartSibling.get(0);
+		NodeRedBlackTree<K> remainingSibling = leftPartSibling.get(1);
+		
+		NodeRedBlackTree<K> zTree = leftNodeSibling.getLeft();
+		
+		newRoot.setLeft(leftNodeSibling);
+		leftNodeSibling.setRed(true);
+		leftNodeSibling.setRight(remainingSibling);
+		leftNodeSibling.setLeft(lca);
+		lca.setRed(false);
+		lca.setLeft(leftChild);
+		leftChild.setRed(true);
+		lca.setRight(zTree);
+		return newRoot;
+	}
+	
+	private NodeRedBlackTree<K> borrowFromLeft234Node(NodeRedBlackTree<K> origin,
+			NodeRedBlackTree<K> parent, NodeRedBlackTree<K> sibling) {
+		
+		return null;
+	}
+	
+	private NodeRedBlackTree<K> mergeWithSibling(NodeRedBlackTree<K> origin, 
+			NodeRedBlackTree<K> root, NodeRedBlackTree<K> sibling) {
+		
+		return null;
+	}
+	
 	private NodeRedBlackTree<K> rebalance2Node234(NodeRedBlackTree<K> leftParent, NodeRedBlackTree<K> leftChild) {
 		NodeRedBlackTree<K> sibling234 = secondNode234(leftParent);
 		if (is2Node(sibling234)) {
 			// Merge with the left part of leftParent
+			
 			List<NodeRedBlackTree<K>> ret = extractLeft234(leftParent, true);
 			NodeRedBlackTree<K> newLeftRoot = ret.get(0);
 			leftParent = ret.get(1);
@@ -678,7 +772,11 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 																						// sibling234
 			setLeftChild234(leftParent, leftChild);
 			return leftParent;
+			
+			/*leftParent = mergeWithParent(leftParent, true);
+			return leftParent; */
 		} else {
+			/*
 			// Merge with the left part of leftParent; borrow from left part of sibling
 			List<NodeRedBlackTree<K>> splitLeftParent = extractLeft234(leftParent, false);
 			NodeRedBlackTree<K> leftBranch = splitLeftParent.get(0);
@@ -703,6 +801,7 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 			 * addLeft234(leftParent, leftPartSibling); setLeftChild234(leftParent,
 			 * leftBranch);
 			 */
+			leftParent = leftNodeBorrowFromRight234Node(leftChild, leftParent, sibling234);
 			return leftParent;
 		}
 	}
