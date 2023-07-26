@@ -89,7 +89,8 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 	@Override
 	public K delete(K k) {
 		Wrapper<K> result = new Wrapper<>();
-		root = deleteRec234Launch(root, k, result);
+		//root = delete2Rec234Launch(root, k, result);
+		result.item = null;
 		return result.item;
 	}
 
@@ -755,8 +756,233 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 		return null;
 	}
 	
+	private NodeRedBlackTree<K> delete2Rec234Launch(NodeRedBlackTree<K> root, K search, Wrapper<K> result) {
+		if (root == null) { //Empty tree. result wrapper is null by default.
+			return null;
+		}
+		/*
+		 * First we need to find the element to delete. If it is in a (2-3-4) leaf, we will be able to
+		 * delete it right away. If not, we need to delete the successor and switch the values.
+		 * 
+		 * The root need not be checked for the "no 2-node" invariant.
+		 */
+		NodeRedBlackTree<K> left234Child = leftNode234(root);
+		boolean leaf = left234Child == null;
+		if (leaf) { //Won't have to do any successor substitution
+			root = deleteInLeaf(root, search, result);
+			return root;
+		} //Else: there is a second level
+		int compareTo = search.compareTo(root.getData());
+		if (is2Node(root)) {
+			//We may have to shrink the size of the tree or do a special rebalance
+			if (compareTo >= 0) {
+				//Check invariant on the right
+				NodeRedBlackTree<K> right = root.getRight();
+				if (is2Node(right)) {
+					//apply invariant
+					NodeRedBlackTree<K> leftSibling = root.getLeft();
+					if (is2Node(leftSibling)) {
+						//shrink and restart (edge case, returns here)
+						root = mergeNodes234(leftSibling, root, right);
+						return delete2Rec234Launch(root, search, result);
+					} else {
+						//borrow
+						root = doRightBorrow(right, root, leftSibling);
+					}
+				}
+			} else {
+				//Check invariant on the left
+				NodeRedBlackTree<K> left = root.getLeft();
+				if (is2Node(left)) {
+					//apply invariant
+					NodeRedBlackTree<K> rightSibling = root.getRight();
+					if (is2Node(rightSibling)) {
+						//shrink and restart (edge case, returns here)
+						root = mergeNodes234(left, root, rightSibling);
+						return delete2Rec234Launch(root, search, result);
+					} else {
+						//borrow
+						root = doLeftBorrow(left, root, rightSibling);
+					}
+				}
+			}
+		} else {
+			//Only normal rebalances may happen. We need to check where do we have to 
+			//check the invariant
+			root = applyNo2NodeInvariant(root, search);
+		}
+		//continue with delete
+		return deleteRec234(root, search, result);
+	}
+	
+	/**
+	 * Checks and applies if necessary the "no 2-node" invariant to the appropriate child of root,
+	 * following the search of element "search". root must not be a 2-node.
+	 * @param root
+	 * @param search
+	 * @return
+	 */
+	private NodeRedBlackTree<K> applyNo2NodeInvariant(NodeRedBlackTree<K> root, K search) {
+		//check the invariant
+		int compareTo = search.compareTo(root.getData());
+		if (compareTo < 0) {
+			NodeRedBlackTree<K> left = root.getLeft();
+			if (left.isRed()) {
+				int compareToLeft = search.compareTo(left.getData());
+				if (compareToLeft >= 0) {
+					//invariant on the middle
+					NodeRedBlackTree<K> middleChild = left.getRight();
+					if (is2Node(middleChild))
+						root = rebalance2Node234Middle(root, middleChild, true);
+					//done
+				} else {
+					//invariant on the left
+					NodeRedBlackTree<K> leftChild = left.getLeft();
+					if (is2Node(leftChild))
+						root = rebalance2Node234Left(root, leftChild);
+					//done
+				}
+			} else if (is2Node(left))
+				root = rebalance2Node234Left(root, left);
+				//done
+		} else if (compareTo == 0) {
+			NodeRedBlackTree<K> right = root.getRight();
+			if (right.isRed()) {
+				NodeRedBlackTree<K> middleChild = root.getLeft();
+				if (is2Node(middleChild))
+					root = rebalance2Node234Middle(root, middleChild, false);
+				//done
+			} else if (is2Node(right))
+				root = rebalance2Node234Right(root, right);
+			//done
+		} else {
+			NodeRedBlackTree<K> right = root.getRight();
+			if (right.isRed()) {
+				int compareToRight = search.compareTo(right.getData());
+				if (compareToRight >= 0) {
+					NodeRedBlackTree<K> rightChild = right.getRight();
+					if (is2Node(rightChild)) 
+						root = rebalance2Node234Right(root, right);
+					//done
+				} else {
+					NodeRedBlackTree<K> middleChild = right.getLeft();
+					if (is2Node(middleChild))
+						root = rebalance2Node234Middle(root, middleChild, false);
+					//done
+				}
+			} else if (is2Node(right))
+				root = rebalance2Node234Right(root, right);
+		}
+		return root;
+	}
+	
+	/**
+	 * Deletes a key from the 2-3-4 tree rooted at root. Root is not a 2-node, and root is not a leaf.
+	 * @param root
+	 * @param search
+	 * @param result
+	 * @return
+	 */
 	private NodeRedBlackTree<K> deleteRec234(NodeRedBlackTree<K> root, K search, Wrapper<K> result) {
-		return null;
+		root = applyNo2NodeInvariant(root, search);
+		//GO
+		int compareTo = search.compareTo(root.getData());
+		if (compareTo == 0) {
+			//Replace by successor. Successor is the minimum of the right tree
+			NodeRedBlackTree<K> right = root.getRight();
+			if (right.isRed()) {
+				NodeRedBlackTree<K> left = right.getLeft();
+				Wrapper<K> successor = new Wrapper<>();
+				left = deleteMinRec234Launch(left, successor);
+				right.setLeft(left);
+				result.item = root.getData();
+				root.changeData(successor.item);
+			} else {
+				Wrapper<K> successor = new Wrapper<>();
+				right = deleteMinRec234Launch(right, successor);
+				root.setRight(right);
+				result.item = root.getData();
+				root.changeData(successor.item);
+			}
+		} else if (compareTo < 0) {
+			//Search in left
+			NodeRedBlackTree<K> left = root.getLeft();
+			if (left.isRed()) {
+				int compareToLeft = search.compareTo(left.getData());
+				if (compareToLeft == 0) {
+					//Replace by successor
+					NodeRedBlackTree<K> right = left.getRight();
+					Wrapper<K> successor = new Wrapper<>();
+					right = deleteMinRec234Launch(right, successor);
+					left.setRight(right);
+					result.item = left.getData();
+					left.changeData(successor.item);
+				} else if (compareToLeft < 0) {
+					NodeRedBlackTree<K> leftChild234 = left.getLeft();
+					if (is234Leaf(leftChild234)) 
+						leftChild234 = deleteInLeaf(leftChild234, search, result);
+					else
+						leftChild234 = deleteRec234(leftChild234, search, result);
+					left.setLeft(leftChild234);
+				} else if (compareToLeft > 0) {
+					NodeRedBlackTree<K> middleChild234 = left.getRight();
+					if (is234Leaf(middleChild234)) 
+						middleChild234 = deleteInLeaf(middleChild234, search, result);
+					else
+						middleChild234 = deleteRec234(middleChild234, search, result);
+					left.setRight(middleChild234);
+				}
+			} else {
+				if (is234Leaf(left)) {
+					left = deleteInLeaf(left, search, result);
+				} else {
+					left = deleteRec234(root, search, result);
+				}
+				root.setLeft(left);
+			}
+		} else if (compareTo > 0) {
+			//Search in right
+			NodeRedBlackTree<K> right = root.getRight();
+			if (right.isRed()) {
+				int compareToRight = search.compareTo(right.getData());
+				if (compareToRight == 0) {
+					//Replace by successor
+					NodeRedBlackTree<K> rightChild = right.getRight();
+					Wrapper<K> successor = new Wrapper<>();
+					rightChild = deleteMinRec234Launch(rightChild, successor);
+					right.setRight(rightChild);
+					result.item = right.getData();
+					right.changeData(successor.item);
+				} else if (compareToRight < 0) {
+					NodeRedBlackTree<K> middleChild234 = right.getLeft();
+					if (is234Leaf(middleChild234)) 
+						middleChild234 = deleteInLeaf(middleChild234, search, result);
+					else
+						middleChild234 = deleteRec234(middleChild234, search, result);
+					right.setLeft(middleChild234);
+				} else if (compareToRight > 0) {
+					NodeRedBlackTree<K> rightChild234 = right.getRight();
+					if (is234Leaf(rightChild234)) 
+						rightChild234 = deleteInLeaf(rightChild234, search, result);
+					else
+						rightChild234 = deleteRec234(rightChild234, search, result);
+					right.setRight(rightChild234);
+				}
+			} else {
+				if (is234Leaf(right)) {
+					right = deleteInLeaf(right, search, result);
+				} else {
+					right = deleteRec234(root, search, result);
+				}
+				root.setLeft(right);
+			}
+		}
+		return root;
+	}
+	
+	private boolean is234Leaf(NodeRedBlackTree<K> node) {
+		NodeRedBlackTree<K> left = node.getLeft();
+		return left == null || (left.isRed() && (left.getLeft() == null));
 	}
 	
 	private NodeRedBlackTree<K> deleteInLeaf(NodeRedBlackTree<K> root, K search, Wrapper<K> result) {
@@ -802,50 +1028,33 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 	}
 	
 	/**
-	 * NOT FINISHED
-	 * @param node
+	 * Deletes the minimum leaf on the tree rooted at leftParent. Returns the resulting tree.
+	 * leftParent should not be null, or a 2-node, or a 2-3-4 leaf.
+	 * @param leftParent
+	 * @param result
 	 * @return
 	 */
-	private boolean is234Leaf(NodeRedBlackTree<K> node) {
-		if (!node.isRed()) {
-			NodeRedBlackTree<K> left = node.getLeft();
-			return left == null || (left.isRed() && (left.getLeft() == null));
-		} else {
-			return false;
+	private NodeRedBlackTree<K> deleteMinRec234(NodeRedBlackTree<K> leftParent, Wrapper<K> result) {
+		NodeRedBlackTree<K> leftChild = leftNode234(leftParent); //Always exists, launcher deals with this case
+		if (is2Node(leftChild)) {
+			leftParent = rebalance2Node234Left(leftParent, leftChild);
+			leftChild = leftNode234(leftParent);
 		}
-	}
-
-	/**
-	 * Deletes the minimum of the sub-tree of grandParent. grandParent should not be
-	 * null.
-	 * 
-	 * @param grandParent
-	 * @param result
-	 */
-	private NodeRedBlackTree<K> deleteMinRec234(NodeRedBlackTree<K> grandParent, Wrapper<K> result) {
-		NodeRedBlackTree<K> leftParent = leftNode234(grandParent); //Always exists; launcher deals with this case
-		NodeRedBlackTree<K> leftChild = leftNode234(leftParent);
-		if (leftChild == null) {
-			// We reached the end!
-			// leftParent is not 2-node by invariant
-			NodeRedBlackTree<K> ret = leftParent.getLeft();
+		if (is234Leaf(leftChild)) {
+			//We reached the end! Delete left-most value
+			NodeRedBlackTree<K> ret = leftChild.getLeft();
 			if (ret == null) {
-				leftParent = rotateLeft(leftParent);
-				ret = leftParent.getLeft();
-				leftParent.setRed(false);
+				leftChild = rotateLeft(leftChild); //is not 2-node by invariant
+				leftChild.setRed(false);
+				ret = leftChild.getLeft();
 			}
-			leftParent.setLeft(null);
 			result.item = ret.getData();
-			setLeftChild234(grandParent, leftParent);
-			return grandParent;
+			leftChild.setLeft(null);
 		} else {
-			if (is2Node(leftChild)) {
-				leftParent = rebalance2Node234Left(leftParent, leftChild);
-			}
-			leftParent = deleteMinRec234(leftParent, result);
-			setLeftChild234(grandParent, leftParent);
-			return grandParent;
+			leftChild = deleteMinRec234(leftChild, result);
 		}
+		setLeftChild234(leftParent, leftChild);
+		return leftParent;
 	}
 	
 	/**
@@ -895,7 +1104,6 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 
 		NodeRedBlackTree<K> remainingSibling = rightSibling;
 		NodeRedBlackTree<K> leftNodeSibling = rightSibling.getLeft();
-		if (leftNodeSibling == null) System.out.println("Left sibling null!!!!!");
 		if (leftNodeSibling == null || !leftNodeSibling.isRed()) {
 			remainingSibling = rotateLeft(rightSibling);
 			remainingSibling.setRed(false);

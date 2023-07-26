@@ -60,13 +60,12 @@ public class NodeRedBlackTree<K extends Comparable<K>> implements Comparable<Nod
     }
     
     /**
-     * Swaps the data of this node with another. Used for rotations (deletions).
+     * Changes the data of this node to a different one.
+     * Used in deletions when substituting this node by the successor.
      * Does not change the color of the nodes.
-     * @param other
+     * @param other the new data
      */
-    public void swapData(NodeRedBlackTree<K> other) {
-    	K otherData = other.data;
-    	other.data = this.data;
+    public void changeData(K otherData) {
     	this.data = otherData;
     }
 
