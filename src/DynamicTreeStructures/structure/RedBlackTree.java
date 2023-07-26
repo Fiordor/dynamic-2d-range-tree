@@ -88,9 +88,11 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 	 */
 	@Override
 	public K delete(K k) {
-		return null;
+		Wrapper<K> result = new Wrapper<>();
+		root = deleteRec234Launch(root, k, result);
+		return result.item;
 	}
-	
+
 	class Wrapper<T> {
 		T item = null;
 
@@ -441,6 +443,7 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 	 *                       instead it is kept by the parent.
 	 * @return [left_node, node_without_left]
 	 */
+	
 	private ArrayList<NodeRedBlackTree<K>> extractLeft234(NodeRedBlackTree<K> root, boolean leftKeepsRight) {
 		ArrayList<NodeRedBlackTree<K>> ret = new ArrayList<NodeRedBlackTree<K>>(2);
 		if (root == null) {
@@ -455,7 +458,7 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 			left.setRed(false);
 			ret.add(root);
 			if (leftKeepsRight) {
-				root.setLeft(null); // Isn't it setLeft??? before it was setRight
+				root.setLeft(null); 
 			} else {
 				root.setLeft(left.getRight());
 				left.setRight(null);
@@ -473,6 +476,43 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 					root.setRight(null);
 				}
 				right.setRed(false);
+			}
+		}
+		return ret;
+	}
+	
+	
+	private ArrayList<NodeRedBlackTree<K>> extractRight234(NodeRedBlackTree<K> root, boolean rightKeepsLeft) {
+		ArrayList<NodeRedBlackTree<K>> ret = new ArrayList<>(2);
+		if (root == null) {
+			throw new RuntimeException("Tried to extract left (2-3-4 method) in a null node");
+		}
+		if (root.isRed() == true)
+			throw new RuntimeException("Tried to use a 2-3-4 method in a red node");
+		NodeRedBlackTree<K> right = root.getRight();
+		if (right != null && right.isRed()) {
+			right.setRed(false);
+			ret.add(right);
+			ret.add(root);
+			if (rightKeepsLeft) {
+				root.setRight(null);
+			} else {
+				root.setRight(right.getLeft());
+				right.setLeft(null);
+			}
+		} else {
+			//the right is the root.
+			ret.add(root);
+			NodeRedBlackTree<K> left = root.getLeft();
+			ret.add(left);
+			if (left != null) {
+				if (rightKeepsLeft) {
+					root.setLeft(left.getRight());
+					left.setRight(null);
+				} else {
+					root.setLeft(null);
+				}
+				left.setRed(false);
 			}
 		}
 		return ret;
@@ -528,28 +568,6 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 		left.setRed(true);
 		right.setRed(true);
 		return middle;
-	}
-	
-	/**
-	 * Merges the left or right part of the parent 2-3-4 node with the left-most
-	 * or right-most children.
-	 * @param parent the root of the parent 2-3-4 tree.
-	 * @param leftChild if we should merge with the left-most children or the right-most ones.
-	 * @return the root of the parent after the merging operation.
-	 */
-	private NodeRedBlackTree<K> mergeWithParent(NodeRedBlackTree<K> parent, boolean leftChild) {
-		if (leftChild) {
-			NodeRedBlackTree<K> firstChild = leftNode234(parent);
-			NodeRedBlackTree<K> secondChild = secondNode234(parent);
-			List<NodeRedBlackTree<K>> splitParent = extractLeft234(parent, false);
-			NodeRedBlackTree<K> leftParent = splitParent.get(0);
-			NodeRedBlackTree<K> remainingParent = splitParent.get(1);
-			NodeRedBlackTree<K> mergedChild = mergeNodes234(firstChild, leftParent, secondChild);
-			setLeftChild234(remainingParent, mergedChild);
-			return remainingParent;
-		} else {
-			return parent;
-		}
 	}
 
 	/**
@@ -639,45 +657,161 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 						return deleteMinRec234Launch(root, result);
 					} else {
 						// Borrow from the sibling
-						ArrayList<NodeRedBlackTree<K>> extractSibling = extractLeft234(sibling, false);
-						NodeRedBlackTree<K> siblingLeft = extractSibling.get(0);
-						NodeRedBlackTree<K> newSibling = extractSibling.get(1);
-						// Build 234 node for the left.
-						// The current root will be the root of the left 234 node.
-						//root.setLeft(leftParent);
-						leftParent.setRed(true);
-						// Move the subtree of the left part of the sibling to the right part of the
-						// left node
-						root.setRight(siblingLeft.getLeft());
-						siblingLeft.setLeft(root);
-						siblingLeft.setRed(false);
-						siblingLeft.setRight(newSibling);
-						// fix our pointers
-						leftParent = root;
-						root = siblingLeft;
+						root = doLeftBorrow(leftParent, root, sibling);
 					}
 				} else {
 					//Normal rebalancing without grandparent
-					NodeRedBlackTree<K> leftParentParent = null;
-					NodeRedBlackTree<K> rightSibling = null;
-					NodeRedBlackTree<K> leftRoot = root.getLeft();
-					NodeRedBlackTree<K> rightRoot = root.getRight();
-					rightSibling = secondNode234(root);
-					if (is2Node(rightSibling)) {
-						ArrayList<NodeRedBlackTree<K>> parts = extractLeft234(root, true);
-						NodeRedBlackTree<K> leftPart = parts.get(0);
-						NodeRedBlackTree<K> newRoot = parts.get(1);
-						newRoot.setLeft(mergeNodes234(leftParent, leftPart, rightSibling));
-						root = newRoot;
-					} else {
-						root = leftNodeBorrowFromRight234Node(leftParent, root, rightSibling);
-					}
-					//root = rebalance2Node234(root, leftParent);
+					root = rebalance2Node234Left(root, leftParent);
 				}
 			} 
 			//End of 2-node special invariant check
 			//Perform deletion
 			return deleteMinRec234(root, result);
+		}
+	}	
+	
+	private NodeRedBlackTree<K> deleteRec234Launch(NodeRedBlackTree<K> root, K search, Wrapper<K> result) {
+		if (root == null) { //Empty tree. result wrapper is null by default.
+			return null;
+		}
+		/*
+		 * First we need to find the element to delete. If it is in a (2-3-4) leaf, we will be able to
+		 * delete it right away. If not, we need to delete the successor and switch the values.
+		 * 
+		 * The root need not be checked for the "no 2-node" invariant.
+		 */
+		NodeRedBlackTree<K> leftChild = leftNode234(root);
+		boolean leaf = leftChild == null;
+		if (leaf) { //Won't have to do any successor substitution
+			root = deleteInLeaf(root, search, result);
+			return root;
+		} else { 
+			//If we find the element in the root 2-3-4 node, we'll have to substitute 
+			//by the successor. Else, we start checking the "no 2-node" invariant on 
+			//the corresponding child. Successor will have to check the "no 2-node invariant" too
+			//First, find if the search data is in this node.
+			int compare = search.compareTo(root.getData());
+			if (compare == 0) {
+				//replace with successor
+			} else if (compare < 0) {
+				//check if it's in left
+				NodeRedBlackTree<K> left = root.getLeft();
+				if (left.isRed()) {
+					//check in left
+					int compareLeft = search.compareTo(left.getData());
+					if (compareLeft == 0) {
+						//replace with successor.
+						//check invariant on the right of left.
+						root = rebalance2Node234Middle(root, left.getRight(), true);
+						//successor
+						//...
+					} else if (compareLeft < 0) {
+						//check invariant on the left of left and recurse
+						root = rebalance2Node234Left(root, left.getLeft());
+						//continue delete
+						deleteRec234(root, search, result);
+					} else {
+						//check invariant on the right of left and recurse
+						root = rebalance2Node234Middle(root, left.getRight(), true);
+						//continue delete
+						deleteRec234(root, search, result);
+					}
+				} else {
+					//check invariant on the left, and recurse on left
+					//check if root is 2-node
+					NodeRedBlackTree<K> right = root.getRight();
+					if (!right.isRed()) {
+						//root is 2-node. Special rebalance may be needed
+						if (is2Node(left)) {
+							//special rebalance
+							if (is2Node(right)) {
+								//merge
+								root = mergeNodes234(left, root, right);
+								//relaunch, size has changed.
+								deleteRec234Launch(root, search, result);
+							} else {
+								//borrow
+								root = doLeftBorrow(left, root, right);
+								//continue with delete
+								deleteRec234(root, search, result);
+							}
+						} else {
+							//just delete
+							deleteRec234(root, search, result);
+						}
+					} else {
+						//root is not 2-node.
+						if (is2Node(left)) {
+							//normal rebalance
+							root = rebalance2Node234Left(root, left);
+						}
+						deleteRec234(root, search, result);
+					}
+				}
+			} else {
+				//same but for right
+			}
+		}
+		return null;
+	}
+	
+	private NodeRedBlackTree<K> deleteRec234(NodeRedBlackTree<K> root, K search, Wrapper<K> result) {
+		return null;
+	}
+	
+	private NodeRedBlackTree<K> deleteInLeaf(NodeRedBlackTree<K> root, K search, Wrapper<K> result) {
+		int compare = search.compareTo(root.getData());
+		if (compare == 0) {
+			//We have found the leaf.
+			result.item = root.getData();
+			NodeRedBlackTree<K> left = root.getLeft();
+			if (left == null) {
+				NodeRedBlackTree<K> right = root.getRight();
+				if (right == null) {
+					return null; //empty tree
+				} else {
+					right.setRed(false); //new root is right
+					return right;
+				}
+			} else {
+				left.setRight(root.getRight()); //new root is left
+				left.setRed(false);
+				return left;
+			}
+		} else if (compare < 0) {
+			NodeRedBlackTree<K> left = root.getLeft();
+			if (left != null && (search.compareTo(left.getData()) == 0)) {
+				result.item = left.getData();
+				root.setLeft(null);
+				return root;
+			} else {
+				//element not found in 2-3-4 leaf
+				return root;
+			}
+		} else {
+			NodeRedBlackTree<K> right = root.getRight();
+			if (right != null && (search.compareTo(right.getData()) == 0)) {
+				result.item = right.getData();
+				root.setRight(null);
+				return root;
+			} else {
+				//element not found in 2-3-4 leaf
+				return root;
+			}
+		}
+	}
+	
+	/**
+	 * NOT FINISHED
+	 * @param node
+	 * @return
+	 */
+	private boolean is234Leaf(NodeRedBlackTree<K> node) {
+		if (!node.isRed()) {
+			NodeRedBlackTree<K> left = node.getLeft();
+			return left == null || (left.isRed() && (left.getLeft() == null));
+		} else {
+			return false;
 		}
 	}
 
@@ -689,26 +823,24 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 	 * @param result
 	 */
 	private NodeRedBlackTree<K> deleteMinRec234(NodeRedBlackTree<K> grandParent, Wrapper<K> result) {
-		NodeRedBlackTree<K> leftParent = leftNode234(grandParent);
-		if (leftParent == null) {
-			// what if grandParent has a left red child? The minimum will be there
-			List<NodeRedBlackTree<K>> leftExtraction = extractLeft234(grandParent, false); // want the rest in the tree
-			result.item = leftExtraction.get(0).getData(); // Since grandParent is not null, this should not be null.
-			return leftExtraction.get(1); // The rest
-		}
+		NodeRedBlackTree<K> leftParent = leftNode234(grandParent); //Always exists; launcher deals with this case
 		NodeRedBlackTree<K> leftChild = leftNode234(leftParent);
 		if (leftChild == null) {
 			// We reached the end!
-			List<NodeRedBlackTree<K>> splitLeftParent = extractLeft234(leftParent, false); // left node does not keep
-																							// the right node
-			NodeRedBlackTree<K> ret = splitLeftParent.get(0);
-			NodeRedBlackTree<K> newLeftParent = splitLeftParent.get(1);
+			// leftParent is not 2-node by invariant
+			NodeRedBlackTree<K> ret = leftParent.getLeft();
+			if (ret == null) {
+				leftParent = rotateLeft(leftParent);
+				ret = leftParent.getLeft();
+				leftParent.setRed(false);
+			}
+			leftParent.setLeft(null);
 			result.item = ret.getData();
-			setLeftChild234(grandParent, newLeftParent);
+			setLeftChild234(grandParent, leftParent);
 			return grandParent;
 		} else {
 			if (is2Node(leftChild)) {
-				leftParent = rebalance2Node234(leftParent, leftChild);
+				leftParent = rebalance2Node234Left(leftParent, leftChild);
 			}
 			leftParent = deleteMinRec234(leftParent, result);
 			setLeftChild234(grandParent, leftParent);
@@ -717,95 +849,204 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 	}
 	
 	/**
+	 * METHODS FOR BORROWING IN THE "NO 2-NODE" INVARIANT
+	 */
+	
+	/**
 	 * leftChild borrows from rightSibling a key. The left-most key of root becomes the
 	 * rbt-parent of leftChild, and the left-most key of rightSibling substitutes root.
+	 * root should not be a 2-node.
 	 * @param leftChild
 	 * @param root
 	 * @param rightSibling
 	 * @return the new root.
 	 */
-	private NodeRedBlackTree<K> leftNodeBorrowFromRight234Node(NodeRedBlackTree<K> leftChild, 
+	private NodeRedBlackTree<K> leftNodeBorrowFromRight(NodeRedBlackTree<K> leftChild, 
 			NodeRedBlackTree<K> root, NodeRedBlackTree<K> rightSibling) {
 		
-		ArrayList<NodeRedBlackTree<K>> leftPartRoot = extractLeft234(root, true);
-		NodeRedBlackTree<K> lca = leftPartRoot.get(0);
-		NodeRedBlackTree<K> newRoot = leftPartRoot.get(1);
+		NodeRedBlackTree<K> lca = root.getLeft();
+		if (!lca.isRed()) {
+			root = rotateLeft(root);
+			lca = root.getLeft();
+			root.setRed(false);
+		}
 		
-		ArrayList<NodeRedBlackTree<K>> leftPartSibling = extractLeft234(rightSibling, false);
-		NodeRedBlackTree<K> leftNodeSibling = leftPartSibling.get(0);
-		NodeRedBlackTree<K> remainingSibling = leftPartSibling.get(1);
+		lca = doLeftBorrow(leftChild, lca, rightSibling);
+		root.setLeft(lca);
+		lca.setRed(true);
+		return root;
+	}
+	
+	private NodeRedBlackTree<K> rightNodeBorrowFromRight(NodeRedBlackTree<K> leftChild,
+			NodeRedBlackTree<K> root, NodeRedBlackTree<K> rightSibling) {
 		
-		NodeRedBlackTree<K> zTree = leftNodeSibling.getLeft();
+		ArrayList<NodeRedBlackTree<K>> rightPartRoot = extractRight234(root, true);
+		NodeRedBlackTree<K> lca = rightPartRoot.get(0);
+		NodeRedBlackTree<K> newRoot = rightPartRoot.get(1);
 		
-		newRoot.setLeft(leftNodeSibling);
-		leftNodeSibling.setRed(true);
-		leftNodeSibling.setRight(remainingSibling);
-		leftNodeSibling.setLeft(lca);
-		lca.setRed(false);
-		lca.setLeft(leftChild);
-		leftChild.setRed(true);
-		lca.setRight(zTree);
+		lca = doLeftBorrow(leftChild, lca, rightSibling);
+		newRoot.setRight(lca);
+		lca.setRed(true);
 		return newRoot;
 	}
 	
-	private NodeRedBlackTree<K> borrowFromLeft234Node(NodeRedBlackTree<K> origin,
-			NodeRedBlackTree<K> parent, NodeRedBlackTree<K> sibling) {
+	private NodeRedBlackTree<K> doLeftBorrow(NodeRedBlackTree<K> leftChild, 
+			NodeRedBlackTree<K> parent, NodeRedBlackTree<K> rightSibling) {
+
+		NodeRedBlackTree<K> remainingSibling = rightSibling;
+		NodeRedBlackTree<K> leftNodeSibling = rightSibling.getLeft();
+		if (leftNodeSibling == null) System.out.println("Left sibling null!!!!!");
+		if (leftNodeSibling == null || !leftNodeSibling.isRed()) {
+			remainingSibling = rotateLeft(rightSibling);
+			remainingSibling.setRed(false);
+			leftNodeSibling = remainingSibling.getLeft();
+		}
+		leftNodeSibling.setRed(false);
+		remainingSibling.setLeft(leftNodeSibling.getRight());
+		leftNodeSibling.setRight(null);
 		
-		return null;
+		NodeRedBlackTree<K> zTree = leftNodeSibling.getLeft();
+		leftNodeSibling.setRight(remainingSibling);
+		leftNodeSibling.setLeft(parent);
+		parent.setRed(false);
+		parent.setLeft(leftChild);
+		leftChild.setRed(true);
+		parent.setRight(zTree);
+		return leftNodeSibling;
 	}
 	
-	private NodeRedBlackTree<K> mergeWithSibling(NodeRedBlackTree<K> origin, 
-			NodeRedBlackTree<K> root, NodeRedBlackTree<K> sibling) {
+	private NodeRedBlackTree<K> leftNodeBorrowFromLeft(NodeRedBlackTree<K> rightChild,
+			NodeRedBlackTree<K> root, NodeRedBlackTree<K> leftSibling) {
 		
-		return null;
+		//ArrayList<NodeRedBlackTree<K>> leftPartRoot = extractLeft234(root, true);
+		//NodeRedBlackTree<K> lca = leftPartRoot.get(0);
+		//NodeRedBlackTree<K> newRoot = leftPartRoot.get(1);
+		
+		NodeRedBlackTree<K> lca = root.getLeft();
+		if (!lca.isRed()) {
+			root = rotateLeft(root);
+			root.setRed(false);
+			lca = root.getLeft();
+		}
+		
+		lca = doRightBorrow(rightChild, lca, leftSibling);
+		root.setLeft(lca);
+		lca.setRed(true);
+		return root;
 	}
 	
-	private NodeRedBlackTree<K> rebalance2Node234(NodeRedBlackTree<K> leftParent, NodeRedBlackTree<K> leftChild) {
+	private NodeRedBlackTree<K> rightNodeBorrowFromLeft(NodeRedBlackTree<K> rightChild,
+			NodeRedBlackTree<K> root, NodeRedBlackTree<K> leftSibling) {
+		
+		ArrayList<NodeRedBlackTree<K>> rightPartRoot = extractRight234(root, true);
+		NodeRedBlackTree<K> lca = rightPartRoot.get(0);
+		NodeRedBlackTree<K> newRoot = rightPartRoot.get(1);
+		
+		lca = doRightBorrow(rightChild, lca, leftSibling);
+		newRoot.setRight(lca);
+		lca.setRed(true);
+		return newRoot;
+	}
+	
+	private NodeRedBlackTree<K> doRightBorrow(NodeRedBlackTree<K> rightChild,
+			NodeRedBlackTree<K> parent, NodeRedBlackTree<K> leftSibling) {
+
+		ArrayList<NodeRedBlackTree<K>> rightPartSibling = extractRight234(leftSibling, false);
+		NodeRedBlackTree<K> rightNodeSibling = rightPartSibling.get(0);
+		NodeRedBlackTree<K> remainingSibling = rightPartSibling.get(1);
+
+		NodeRedBlackTree<K> zTree = rightNodeSibling.getRight();
+		rightNodeSibling.setLeft(remainingSibling);
+		rightNodeSibling.setRight(parent);
+		parent.setRed(false);
+		parent.setRight(rightChild);
+		rightChild.setRed(true);
+		parent.setLeft(zTree);
+		return rightNodeSibling;
+	}
+	
+	/**
+	 * Applies the "no 2-node" invariant to leftChild. leftChild must be the left-most 2-3-4
+	 * child of leftParent. leftParent should not be a 2-node.
+	 * Will apply merging or borrowing from the right sibling of leftChild.
+	 * @param leftParent the 2-3-4 parent of leftChild
+	 * @param leftChild the left-most child of leftParent to rebalance.
+	 * @return
+	 */
+	private NodeRedBlackTree<K> rebalance2Node234Left(NodeRedBlackTree<K> leftParent, NodeRedBlackTree<K> leftChild) {
 		NodeRedBlackTree<K> sibling234 = secondNode234(leftParent);
 		if (is2Node(sibling234)) {
 			// Merge with the left part of leftParent
 			
-			List<NodeRedBlackTree<K>> ret = extractLeft234(leftParent, true);
-			NodeRedBlackTree<K> newLeftRoot = ret.get(0);
-			leftParent = ret.get(1);
-			leftChild = mergeNodes234(leftChild, newLeftRoot, newLeftRoot.getRight()); // last one could also be
-																						// sibling234
-			setLeftChild234(leftParent, leftChild);
+			if (!leftParent.getLeft().isRed()) {
+				leftParent = rotateLeft(leftParent);
+				leftParent.setRed(false);
+			}
+			NodeRedBlackTree<K> newLeftRoot = leftParent.getLeft();
+			leftChild = mergeNodes234(leftChild, newLeftRoot, sibling234);
+			leftParent.setLeft(leftChild);
 			return leftParent;
-			
-			/*leftParent = mergeWithParent(leftParent, true);
-			return leftParent; */
 		} else {
-			/*
-			// Merge with the left part of leftParent; borrow from left part of sibling
-			List<NodeRedBlackTree<K>> splitLeftParent = extractLeft234(leftParent, false);
-			NodeRedBlackTree<K> leftBranch = splitLeftParent.get(0);
-			leftChild.setRed(true); // The RBT child of the leftBranch
-			leftParent = splitLeftParent.get(1);
-			// now, sibling is the left child of the new leftParent
-			List<NodeRedBlackTree<K>> splitSibling = extractLeft234(sibling234, false);
-			NodeRedBlackTree<K> leftPartSibling = splitSibling.get(0);
-			NodeRedBlackTree<K> rightPartSibling = splitSibling.get(1);
-			// leftPartSibling is now the left part of the 234 node of leftParent
-			leftParent.setLeft(leftPartSibling);
-			leftPartSibling.setRed(true);
-			NodeRedBlackTree<K> zTree = leftPartSibling.getLeft();
-			leftPartSibling.setLeft(leftBranch);
-			leftBranch.setRight(zTree);
-			leftPartSibling.setRight(rightPartSibling);
-			/*
-			 * setLeftChild234(leftParent, rightPartSibling); //the root of sibling might
-			 * have changed //a bit of dirty pointer manipulation so that the left 234 child
-			 * of sibling be now the //right 234 child of the left branch
-			 * leftBranch.setRight(leftPartSibling.getLeft()); //Recheck this
-			 * addLeft234(leftParent, leftPartSibling); setLeftChild234(leftParent,
-			 * leftBranch);
-			 */
-			leftParent = leftNodeBorrowFromRight234Node(leftChild, leftParent, sibling234);
+			leftParent = leftNodeBorrowFromRight(leftChild, leftParent, sibling234);
 			return leftParent;
 		}
 	}
-
+	
+	/**
+	 * Applies the "no 2-node" invariant to the middle child of the parent 2-3-4 node.
+	 * The parent 2-3-4 node should not be a 2-node.
+	 * @param parent
+	 * @param middleChild
+	 * @param leftLeaning
+	 * @return
+	 */
+	private NodeRedBlackTree<K> rebalance2Node234Middle(NodeRedBlackTree<K> parent, 
+			NodeRedBlackTree<K> middleChild, boolean leftLeaning) {
+		if (leftLeaning) {
+			NodeRedBlackTree<K> lca = parent.getLeft();
+			NodeRedBlackTree<K> leftSibling = lca.getLeft();
+			//Check if we have to merge
+			if (is2Node(leftSibling)) {
+				parent.setLeft(mergeNodes234(leftSibling, lca, middleChild));
+			} else {
+				parent = leftNodeBorrowFromLeft(middleChild, parent, leftSibling);
+			}
+		} else {
+			//Check if merge
+			//If not merge:
+			NodeRedBlackTree<K> lca = parent.getRight();
+			NodeRedBlackTree<K> rightSibling = lca.getRight();
+			if (is2Node(rightSibling)) {
+				parent.setRight(mergeNodes234(middleChild, lca, rightSibling));
+			} else {
+				parent = rightNodeBorrowFromRight(middleChild, parent, rightSibling);
+			}
+		}
+		return parent;
+	}
+	
+	private NodeRedBlackTree<K> rebalance2Node234Right(NodeRedBlackTree<K> parent, 
+			NodeRedBlackTree<K> rightChild) {
+		//Get the left sibling
+		NodeRedBlackTree<K> leftSibling = null;
+		NodeRedBlackTree<K> right = parent.getRight();
+		if (right.isRed()) {
+			leftSibling = right.getLeft();
+		} else {
+			leftSibling = parent.getLeft().getRight();
+		}
+		if (is2Node(leftSibling)) {
+			ArrayList<NodeRedBlackTree<K>> rightPartParent = extractRight234(parent, true);
+			NodeRedBlackTree<K> lca = rightPartParent.get(0);
+			NodeRedBlackTree<K> newRoot = rightPartParent.get(1);
+			newRoot.setRight(mergeNodes234(leftSibling, lca, rightChild));
+			return newRoot;
+		} else {
+			parent = rightNodeBorrowFromRight(rightChild, parent, leftSibling);
+			return parent;
+		}
+	}
+	
 	private void toArrayNext(NodeRedBlackTree<K> node, ArrayList<NodeRedBlackTree<K>> list) {
 
 		if (node.getLeft() != null) {
