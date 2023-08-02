@@ -150,11 +150,28 @@ public class Controller {
     }
 
     public void delete(String input) {
+    	/*
         if (input.length() == 0) {
             return;
         }
 
         label.setText("Not implemented");
+        */
+        if (input.length() == 0) {
+            return;
+        }
+        int value = Integer.parseInt(input);
+
+        long start = System.nanoTime();
+        tree.delete(value);
+        long fin = System.nanoTime();
+        double ms = (fin - start) / 1000000.0;
+
+        table.addRow(new Object[]{table.getRowCount() + 1, input, ms});
+
+        System.out.printf("Delete: %d\n", value);
+        label.setText(String.format("Delete %d: %.6f ms", value, ms));
+        print();
     }
 
     public void generate(String input) {
