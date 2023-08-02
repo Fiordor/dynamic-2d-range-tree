@@ -111,7 +111,7 @@ public class RedBlackTreeStatefulTests {
 			//Here we perform the action. The action will be to delete a random value of the set.
 			//Note that getting a random value from the set is O(n) time.
 			Arbitrary<Integer> deleteIndex = Arbitraries.integers().between(0, model.size()-1);
-			return deleteIndex.map(index -> Transformer.mutate("delete ix(" + index + ")", 
+			return deleteIndex.map(index -> Transformer.mutate("delete val " + hashSetGet(model, index) + " at index " + index, 
 					(rbt_and_set_again) -> {
 				//Find the key
 				RedBlackTree<Integer> rbt = rbt_and_set_again.get1();
@@ -124,11 +124,19 @@ public class RedBlackTreeStatefulTests {
 				Integer data = rbt.delete(key);
 				model.remove(key);
 				//Check result (postcondition)
-				assertNotNull(data);
-				assertEquals(data, key);
-				assertNull(rbt.search(key));
+				assertNotNull("Returned element from deletion should not be null, expected " + key, data);
+				assertEquals("Expected " + key + ", but deleted " + data, data, key);
+				assertNull("Key " + key + " was not deleted", rbt.search(key));
 			}));
 		}
+	}
+	
+	private static <K> K hashSetGet(HashSet<K> set, int index) {
+		Iterator<K> it = set.iterator();
+		for (int i = 0; i < index; i++) {
+			it.next();
+		}
+		return it.next();
 	}
 
 	@Property
@@ -154,6 +162,7 @@ public class RedBlackTreeStatefulTests {
 		return ActionChain.startWith(() -> Tuple.of(new RedBlackTree<Integer>(), new HashSet<Integer>()))
 				.withAction(new InsertAction())
 				//.withAction(new SearchAction())
+				.withAction(new DeleteAction())
 				.withAction(deleteMin());
 	}
 }

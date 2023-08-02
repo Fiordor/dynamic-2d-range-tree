@@ -22,6 +22,19 @@ public class RedBlackTreeTest {
     }
     
     @Test
+    public void testDelete() {
+        RedBlackTree<Integer> rbt = new RedBlackTree<>();
+        rbt.deleteMin();
+        rbt.insert(17);
+        rbt.insert(-1200000000);
+        rbt.insert(1700000000);
+        rbt.insert(690000000);
+        rbt.insert(-177000000);
+        rbt.insert(2691165);
+        
+    }
+    
+    @Test
     public void root_1_r() {
     	String inputPath = TestTreesFolder + "input_root_1_r.tikz";
     	String outputPath = TestTreesFolder + "output_root_1_r.tikz";

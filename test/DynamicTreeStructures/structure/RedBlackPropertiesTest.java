@@ -106,17 +106,19 @@ public class RedBlackPropertiesTest {
 				rbt.insert(key);
 				insertedItems.add(key);
 				// A 1 in 3 chance of deleting something
-				if (r.nextInt(3) == 0) {
-					// A 1 in 2 chance of deleting deliberately something that we inserted
-					if (r.nextBoolean()) {
-						// Delete something that we inserted
-						int ix = r.nextInt(insertedItems.size());
-						Integer randomInsertedElement = insertedItems.get(ix);
-						rbt.delete(randomInsertedElement);
-						// Note that this element is still in the set of inserted elements.
-					} else {
-						// Delete a random int
-						rbt.delete(r.nextInt());
+				if (TEST_DELETES) {
+					if (r.nextInt(3) == 0) {
+						// A 1 in 2 chance of deleting deliberately something that we inserted
+						if (r.nextBoolean()) {
+							// Delete something that we inserted
+							int ix = r.nextInt(insertedItems.size());
+							Integer randomInsertedElement = insertedItems.get(ix);
+							rbt.delete(randomInsertedElement);
+							// Note that this element is still in the set of inserted elements.
+						} else {
+							// Delete a random int
+							rbt.delete(r.nextInt());
+						}
 					}
 				}
 			}
@@ -156,6 +158,9 @@ public class RedBlackPropertiesTest {
 
 	@Property
 	boolean isTreeDelete(@ForAll("insertDeleteFromNull") RedBlackTree<Integer> rbt) {
+		if (!TEST_DELETES) {
+			return true;
+		}
 		try {
 			boolean b = checkTreeStructure(rbt);
 			if (!b)

@@ -89,8 +89,8 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 	@Override
 	public K delete(K k) {
 		Wrapper<K> result = new Wrapper<>();
-		//root = delete2Rec234Launch(root, k, result);
-		result.item = null;
+		root = delete2Rec234Launch(root, k, result);
+		//result.item = null;
 		return result.item;
 	}
 
@@ -848,7 +848,7 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 		} else if (compareTo == 0) {
 			NodeRedBlackTree<K> right = root.getRight();
 			if (right.isRed()) {
-				NodeRedBlackTree<K> middleChild = root.getLeft();
+				NodeRedBlackTree<K> middleChild = right.getLeft();
 				if (is2Node(middleChild))
 					root = rebalance2Node234Middle(root, middleChild, false);
 				//done
@@ -862,7 +862,7 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 				if (compareToRight >= 0) {
 					NodeRedBlackTree<K> rightChild = right.getRight();
 					if (is2Node(rightChild)) 
-						root = rebalance2Node234Right(root, right);
+						root = rebalance2Node234Right(root, rightChild);
 					//done
 				} else {
 					NodeRedBlackTree<K> middleChild = right.getLeft();
@@ -936,7 +936,7 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 				if (is234Leaf(left)) {
 					left = deleteInLeaf(left, search, result);
 				} else {
-					left = deleteRec234(root, search, result);
+					left = deleteRec234(left, search, result);
 				}
 				root.setLeft(left);
 			}
@@ -972,9 +972,9 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 				if (is234Leaf(right)) {
 					right = deleteInLeaf(right, search, result);
 				} else {
-					right = deleteRec234(root, search, result);
+					right = deleteRec234(right, search, result);
 				}
-				root.setLeft(right);
+				root.setRight(right);
 			}
 		}
 		return root;
@@ -1250,7 +1250,7 @@ public class RedBlackTree<K extends Comparable<K>> implements TreeStructure<Node
 			newRoot.setRight(mergeNodes234(leftSibling, lca, rightChild));
 			return newRoot;
 		} else {
-			parent = rightNodeBorrowFromRight(rightChild, parent, leftSibling);
+			parent = rightNodeBorrowFromLeft(rightChild, parent, leftSibling);
 			return parent;
 		}
 	}
